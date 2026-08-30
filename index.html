@@ -130,7 +130,7 @@
     font-family:var(--font-mono);
     font-size:11px;
     padding:0 8px;
-    max-width:108px;
+    max-width:115px;
   }
   .filter-select{
     width:100%;
@@ -271,26 +271,13 @@
     white-space:pre-wrap;
     line-height:1.5;
   }
-  .card-link{
-    display:inline-block;
-    margin-top:8px;
-    font-size:12px;
-    color:var(--gold);
-    text-decoration:underline;
-  }
   .card-bottom{
     display:flex;
-    justify-content:space-between;
+    justify-content:flex-end;
     align-items:center;
     margin-top:14px;
     border-top:1px dashed var(--line);
     padding-top:10px;
-  }
-  .price{
-    font-family:var(--font-mono);
-    font-size:16px;
-    font-weight:bold;
-    color:var(--ink);
   }
   .stamp-mark{
     font-family:var(--font-mono);
@@ -407,9 +394,6 @@
     margin-top:5px;
     line-height:1.4;
   }
-  .price-row{display:flex;gap:8px;}
-  .price-row input{flex:1.4;}
-  .price-row select{flex:1;padding:11px 6px;}
   .tag-chips{
     display:flex;
     gap:6px;
@@ -707,8 +691,6 @@
     <select class="sort-select" id="sortSelect">
       <option value="created_desc">新增時間（新→舊）</option>
       <option value="created_asc">新增時間（舊→新）</option>
-      <option value="price_desc">價格（高→低）</option>
-      <option value="price_asc">價格（低→高）</option>
       <option value="title">書名</option>
     </select>
   </div>
@@ -771,11 +753,6 @@
       <input id="fTitle" placeholder="例如：無題的青春">
     </div>
     <div class="field">
-      <label>社團</label>
-      <input id="fCircle" placeholder="例如：某某工房">
-      <div class="tag-chips" id="circleTagChips"></div>
-    </div>
-    <div class="field">
       <label>作者（可複選，合輯可填多位）</label>
       <div class="tag-chips" id="authorSelectedChips"></div>
       <div class="multi-input-row">
@@ -798,24 +775,6 @@
         <button type="button" class="add-tag-btn" id="addPairingBtn">新增</button>
       </div>
       <div class="tag-chips" id="pairingSuggestChips"></div>
-    </div>
-
-    <h3 class="settings-section">交易資訊</h3>
-    <div class="field">
-      <label>價格</label>
-      <div class="price-row">
-        <input id="fPrice" type="number" inputmode="decimal" placeholder="例如：350">
-        <select id="fCurrency">
-          <option value="TWD">NT$ 台幣</option>
-          <option value="JPY">¥ 日幣</option>
-          <option value="CNY">CN¥ 人民幣</option>
-          <option value="KRW">₩ 韓元</option>
-        </select>
-      </div>
-    </div>
-    <div class="field">
-      <label>購買連結</label>
-      <input id="fLink" type="url" placeholder="https://...">
     </div>
 
     <h3 class="settings-section">備註</h3>
@@ -911,20 +870,6 @@
     <h3 class="settings-section">書櫃</h3>
     <button type="button" class="mini-btn" id="manageShelvesBtn" style="width:100%;padding:10px;">管理書櫃 / 顏色</button>
 
-    <h3 class="settings-section">幣別匯率（僅供價格排序換算參考，非即時匯率）</h3>
-    <div class="field">
-      <label>1 日圓（JPY）＝ 多少台幣</label>
-      <input type="number" step="0.001" id="rateJPY">
-    </div>
-    <div class="field">
-      <label>1 人民幣（CNY）＝ 多少台幣</label>
-      <input type="number" step="0.001" id="rateCNY">
-    </div>
-    <div class="field">
-      <label>1 韓元（KRW）＝ 多少台幣</label>
-      <input type="number" step="0.001" id="rateKRW">
-    </div>
-
     <h3 class="settings-section">資料備份</h3>
     <div class="settings-btn-row">
       <button class="mini-btn" id="exportBtn">匯出備份</button>
@@ -953,19 +898,19 @@
     <h2>使用說明</h2>
 
     <h4>新增書籍</h4>
-    <p>點右下角「＋」新增。可以填：封面照、類型（漫畫／小說／畫冊／其他）、書櫃分類、我的最愛、書名、社團、作者（可複選，合輯可填多位）、作品、配對（可複選，合輯可填多組）、價格與幣別、購買連結、備註。只有書名是必填。</p>
+    <p>點右下角「＋」新增。可以填：封面照、類型（漫畫／小說／畫冊／其他）、書櫃分類、我的最愛、書名、作者（可複選，合輯可填多位）、作品、配對（可複選，合輯可填多組）、備註。只有書名是必填。</p>
 
     <h4>標籤與快速選取</h4>
-    <p>社團、作品、配對、作者這幾欄，只要你輸入過一次，之後在欄位下方就會出現可以直接點選的標籤，不用每次重打。</p>
+    <p>作品、配對、作者這幾欄，只要你輸入過一次，之後在欄位下方就會出現可以直接點選的標籤，不用每次重打。</p>
 
     <h4>書櫃</h4>
     <p>在「設定 → 書櫃」裡新增、改名、刪除書櫃，並分別設定書櫃的底色與名稱文字顏色。切到「陳列」檢視時，書會依書櫃顏色排在對應顏色的格子裡。</p>
 
     <h4>檢視與排序</h4>
-    <p>搜尋列下方可以切換「清單」或「陳列」檢視。右上角的排序選單可依新增時間、價格、書名排序；價格排序會依「設定」裡填寫的匯率，先換算成台幣等值再比較大小。</p>
+    <p>搜尋列下方可以切換「清單」或「陳列」檢視。右上角的排序選單可依新增時間、書名排序。</p>
 
     <h4>篩選與搜尋</h4>
-    <p>可依書櫃、我的最愛、類型、作品、配對篩選，篩選後上方的「本數／花費」統計也會跟著更新。搜尋框可直接搜書名、作者、配對關鍵字。</p>
+    <p>可依書櫃、我的最愛、類型、作品、配對篩選，篩選後上方的「本數」統計也會跟著更新。搜尋框可直接搜書名、作者、配對關鍵字。</p>
 
     <h4>分享單本書</h4>
     <p>每張書籍卡片右上角的「⇪」可以把這一本書匯出成一個小檔案，傳給同樣使用這個工具的朋友，對方用「匯入備份」就能把這本書加進他自己的收藏（不會動到他原本的資料）。</p>
@@ -989,7 +934,6 @@
 let books = [];
 let shelves = [];
 let profile = { nickname:"", title:"", avatar:null, font:"notoSerifTC", customFontData:null, customFontName:"" };
-let rates = { JPY:0.21, CNY:4.4, KRW:0.023 };
 let editingId = null;
 let deleteTarget = null;
 let activeWorkFilter = "全部";
@@ -1008,12 +952,8 @@ let currentType = "";
 const STORAGE_KEY = "doujin_books_v2";
 const MAX_DIM = 640;
 const JPEG_QUALITY = 0.6;
-const CURRENCY_SYMBOLS = { TWD:"NT$", JPY:"¥", CNY:"CN¥", KRW:"₩" };
-const CURRENCY_ORDER = ["TWD","JPY","CNY","KRW"];
-const VALID_CURRENCIES = ["TWD","JPY","CNY","KRW"];
 const DEFAULT_SHELF_COLOR = "#B08D57";
 const DEFAULT_SHELF_TEXT = "#2C3550";
-const DEFAULT_RATES = { JPY:0.21, CNY:4.4, KRW:0.023 };
 const FIXED_TYPES = ["漫畫","小說","畫冊","其他"];
 const KNOWN_FONTS = ["notoSerifTC","notoSansTC","notoSerifSC","notoSansSC","notoSansJP","notoSerifJP","notoSansKR"];
 const FONT_STACKS = {
@@ -1050,11 +990,6 @@ function compressImage(file, maxDim){
   });
 }
 
-// Rebuilds a book object field-by-field from untrusted input (e.g. an
-// imported file). Unknown/extra keys are dropped, missing keys fall back
-// to safe defaults, and the photo is only kept if it's actually an image
-// data URI — this is what keeps old backups (missing newer fields) and
-// any hand-edited/foreign file from breaking the app or injecting markup.
 function sanitizeBookData(raw, preserveMeta){
   raw = raw && typeof raw === "object" ? raw : {};
   const asStr = (v, max)=> typeof v === "string" ? v.slice(0, max) : "";
@@ -1062,13 +997,9 @@ function sanitizeBookData(raw, preserveMeta){
   return {
     id: "b"+Date.now()+Math.random().toString(36).slice(2,7),
     title: asStr(raw.title, 200),
-    circle: asStr(raw.circle, 200),
     authors: asStrArray(raw.authors, 30),
     work: asStr(raw.work, 200),
     pairings: asStrArray(raw.pairings, 30),
-    price: (typeof raw.price === "string" || typeof raw.price === "number") ? String(raw.price).slice(0,20) : "",
-    currency: VALID_CURRENCIES.includes(raw.currency) ? raw.currency : "TWD",
-    link: /^https?:\/\//i.test(raw.link||"") ? asStr(raw.link, 500) : "",
     note: asStr(raw.note, 2000),
     shelf: asStr(raw.shelf, 100),
     type: FIXED_TYPES.includes(raw.type) ? raw.type : "",
@@ -1111,21 +1042,8 @@ function sanitizeProfile(raw){
   };
 }
 
-function sanitizeRates(raw){
-  raw = raw && typeof raw === "object" ? raw : {};
-  const clean = (v, def)=> (typeof v === "number" && isFinite(v) && v>0) ? v : def;
-  return { JPY:clean(raw.JPY, DEFAULT_RATES.JPY), CNY:clean(raw.CNY, DEFAULT_RATES.CNY), KRW:clean(raw.KRW, DEFAULT_RATES.KRW) };
-}
-
 function getShelf(name){
   return shelves.find(s=>s.name===name) || null;
-}
-
-function convertToBase(amount, currency){
-  const num = Number(amount)||0;
-  if(!currency || currency==="TWD") return num;
-  const r = rates[currency];
-  return num * (typeof r==="number" ? r : (DEFAULT_RATES[currency]||1));
 }
 
 function exportSingleBook(id){
@@ -1151,22 +1069,21 @@ function loadBooks(){
   try{
     const raw = localStorage.getItem(STORAGE_KEY);
     if(!raw){
-      books = []; shelves = []; profile = sanitizeProfile({}); rates = sanitizeRates({});
+      books = []; shelves = []; profile = sanitizeProfile({});
     }else{
       const parsed = JSON.parse(raw);
       if(Array.isArray(parsed)){
-        books = parsed; shelves = []; profile = sanitizeProfile({}); rates = sanitizeRates({});
+        books = parsed; shelves = []; profile = sanitizeProfile({});
       }else if(parsed && typeof parsed === "object"){
         books = Array.isArray(parsed.books) ? parsed.books : [];
         shelves = Array.isArray(parsed.shelves) ? parsed.shelves.map(sanitizeShelf).filter(Boolean) : [];
         profile = sanitizeProfile(parsed.profile);
-        rates = sanitizeRates(parsed.rates);
       }else{
-        books = []; shelves = []; profile = sanitizeProfile({}); rates = sanitizeRates({});
+        books = []; shelves = []; profile = sanitizeProfile({});
       }
     }
   }catch(e){
-    books = []; shelves = []; profile = sanitizeProfile({}); rates = sanitizeRates({});
+    books = []; shelves = []; profile = sanitizeProfile({});
   }
   books.forEach(b=>{ if(b.shelf && !getShelf(b.shelf)) shelves.push({name:b.shelf, color:DEFAULT_SHELF_COLOR, textColor:DEFAULT_SHELF_TEXT}); });
   applyProfile();
@@ -1175,7 +1092,7 @@ function loadBooks(){
 
 function persist(){
   try{
-    localStorage.setItem(STORAGE_KEY, JSON.stringify({books, shelves, profile, rates}));
+    localStorage.setItem(STORAGE_KEY, JSON.stringify({books, shelves, profile}));
   }catch(e){
     console.error("儲存失敗", e);
     alert("儲存失敗，可能是照片/字體太多超過瀏覽器的容量上限，建議移除幾張舊照片或自訂字體後再試一次。");
@@ -1216,32 +1133,10 @@ function applyProfile(){
   document.documentElement.style.setProperty("--font-serif", stack);
 }
 
-function fmtMoney(amount, currency){
-  const num = Number(amount)||0;
-  const sym = CURRENCY_SYMBOLS[currency] || "$";
-  return sym + num.toLocaleString();
-}
-
-function fmtMoneyGrouped(list){
-  const sums = {};
-  list.forEach(b=>{
-    const c = b.currency || "TWD";
-    sums[c] = (sums[c]||0) + (Number(b.price)||0);
-  });
-  const keys = Object.keys(sums).sort((a,b)=>{
-    const ia = CURRENCY_ORDER.indexOf(a), ib = CURRENCY_ORDER.indexOf(b);
-    return (ia<0?99:ia) - (ib<0?99:ib);
-  });
-  if(keys.length===0) return "$0";
-  return keys.map(c=>fmtMoney(sums[c], c)).join(" ・ ");
-}
-
 function sortBooks(list){
   const arr = list.slice();
   switch(sortMode){
     case "created_asc": arr.sort((a,b)=>a.createdAt-b.createdAt); break;
-    case "price_desc": arr.sort((a,b)=>convertToBase(b.price,b.currency)-convertToBase(a.price,a.currency)); break;
-    case "price_asc": arr.sort((a,b)=>convertToBase(a.price,a.currency)-convertToBase(b.price,b.currency)); break;
     case "title": arr.sort((a,b)=>String(a.title).localeCompare(String(b.title),'zh-Hant')); break;
     default: arr.sort((a,b)=>b.createdAt-a.createdAt);
   }
@@ -1266,7 +1161,7 @@ function render(){
     const matchesShelf = activeShelfFilter==="全部" || b.shelf===activeShelfFilter;
     const matchesType = activeTypeFilter==="全部" || b.type===activeTypeFilter;
     const matchesFavorite = !activeFavoriteOnly || !!b.favorite;
-    const hay = [b.title,b.circle,(b.authors||[]).join(" "),b.work,(b.pairings||[]).join(" "),b.shelf,b.type,b.note].join(" ").toLowerCase();
+    const hay = [b.title,(b.authors||[]).join(" "),b.work,(b.pairings||[]).join(" "),b.shelf,b.type,b.note].join(" ").toLowerCase();
     const searchTerms = search.split(/\s+/).filter(Boolean);
     const matchesSearch = searchTerms.length===0 || searchTerms.every(term=>hay.includes(term));
     return matchesWork && matchesPairing && matchesShelf && matchesType && matchesFavorite && matchesSearch;
@@ -1277,7 +1172,6 @@ function render(){
   const isFiltered = activeWorkFilter!=="全部" || activePairingFilter!=="全部" || activeShelfFilter!=="全部" || activeTypeFilter!=="全部" || activeFavoriteOnly || search;
   statsBar.innerHTML = `
     <div>${isFiltered ? "符合" : "共"} <b>${filtered.length}</b> 本</div>
-    <div>${isFiltered ? "此範圍花費" : "總花費"} <b>${fmtMoneyGrouped(filtered)}</b></div>
   `;
 
   if(viewMode === "shelf"){
@@ -1316,7 +1210,6 @@ function renderCardList(filtered){
           <div class="meta-line">
             ${b.type ? `<span class="label">類型</span>${escapeHtml(b.type)}` : ""}
             ${b.shelf ? ` ／ <span class="label">書櫃</span>${shelfBadge(b.shelf)}` : ""}
-            ${b.circle ? ` ／ <span class="label">社團</span>${escapeHtml(b.circle)}` : ""}
             ${(b.authors&&b.authors.length) ? ` ／ <span class="label">作者</span>${escapeHtml(b.authors.join("、"))}` : ""}
             ${b.work ? ` ／ <span class="label">作品</span>${escapeHtml(b.work)}` : ""}
           </div>
@@ -1324,9 +1217,7 @@ function renderCardList(filtered){
         </div>
       </div>
       ${b.note ? `<div class="card-extra">${escapeHtml(b.note)}</div>` : ""}
-      ${b.link ? `<a class="card-link" href="${escapeAttr(b.link)}" target="_blank" rel="noopener">🔗 購買連結</a>` : ""}
       <div class="card-bottom">
-        <div class="price">${fmtMoney(b.price, b.currency)}</div>
         <div class="stamp-mark">已收藏</div>
       </div>
     </div>`;
@@ -1406,7 +1297,6 @@ function renderChipRow(elId, values, activeValue, onPick){
 
 function renderFilterSelect(elId, values, activeValue, onPick){
   const el = document.getElementById(elId);
-  const prevValue = el.value;
   el.innerHTML = `<option value="全部">全部</option>` +
     values.map(v=>`<option value="${escapeAttr(v)}">${escapeHtml(v)}</option>`).join("");
   el.value = values.includes(activeValue) || activeValue==="全部" ? activeValue : "全部";
@@ -1438,10 +1328,6 @@ function renderShelfChips(){
       c.style.borderColor = s.color;
       c.style.color = s.textColor;
     }else{
-      // Inactive chips always use a fixed readable color — the shelf's own
-      // custom text color is meant to pair with its own background color
-      // (the active chip, the shelf banner, the badge), not with the
-      // neutral card background here, or it can end up unreadable.
       c.style.borderColor = s.color;
       c.style.color = "var(--ink-soft)";
     }
@@ -1774,9 +1660,6 @@ document.getElementById("settingsBtn").onclick = ()=>{
   document.getElementById("nicknameInput").value = profile.nickname;
   document.getElementById("titleInput").value = profile.title;
   document.getElementById("fontSelect").value = KNOWN_FONTS.includes(profile.font) ? profile.font : "notoSerifTC";
-  document.getElementById("rateJPY").value = rates.JPY;
-  document.getElementById("rateCNY").value = rates.CNY;
-  document.getElementById("rateKRW").value = rates.KRW;
   updateAvatarPreview();
   refreshFontSelectUI();
   document.getElementById("settingsOverlay").classList.add("open");
@@ -1864,29 +1747,13 @@ document.getElementById("removeCustomFontBtn").onclick = ()=>{
   document.getElementById("fontSelect").value = KNOWN_FONTS.includes(profile.font) ? profile.font : "notoSerifTC";
 };
 
-function bindRateInput(id, key){
-  document.getElementById(id).oninput = (e)=>{
-    const v = Number(e.target.value);
-    rates[key] = (isFinite(v) && v>0) ? v : DEFAULT_RATES[key];
-    persist();
-    render();
-  };
-}
-bindRateInput("rateJPY","JPY");
-bindRateInput("rateCNY","CNY");
-bindRateInput("rateKRW","KRW");
-
 function openSheet(id){
   editingId = id || null;
   const b = id ? books.find(x=>x.id===id) : null;
   document.getElementById("sheetTitle").textContent = id ? "編輯書籍" : "新增書籍";
   document.getElementById("fTitle").value = b ? b.title : "";
-  document.getElementById("fCircle").value = b ? (b.circle || "") : "";
   document.getElementById("fWork").value = b ? b.work : "";
   document.getElementById("fPairingInput").value = "";
-  document.getElementById("fPrice").value = b ? b.price : "";
-  document.getElementById("fCurrency").value = b ? (b.currency || "TWD") : "TWD";
-  document.getElementById("fLink").value = b ? (b.link || "") : "";
   document.getElementById("fNote").value = b ? (b.note || "") : "";
   document.getElementById("fAuthorInput").value = "";
   currentAuthors = b ? (b.authors ? b.authors.slice() : []) : [];
@@ -1902,7 +1769,6 @@ function openSheet(id){
   renderAuthorSuggestChips();
   renderPairingSelectedChips();
   renderPairingSuggestChips();
-  renderSingleTagChips("circleTagChips","fCircle", Array.from(new Set(books.map(x=>x.circle).filter(Boolean))));
   renderSingleTagChips("workTagChips","fWork", Array.from(new Set(books.map(x=>x.work).filter(Boolean))));
   document.getElementById("sheetOverlay").classList.add("open");
 }
@@ -1951,13 +1817,9 @@ document.getElementById("saveBtn").onclick = ()=>{
   addPairingFromInput();
   const data = {
     title,
-    circle: document.getElementById("fCircle").value.trim(),
     authors: currentAuthors.slice(),
     work: document.getElementById("fWork").value.trim(),
     pairings: currentPairings.slice(),
-    price: document.getElementById("fPrice").value.trim(),
-    currency: document.getElementById("fCurrency").value,
-    link: document.getElementById("fLink").value.trim(),
     note: document.getElementById("fNote").value.trim(),
     shelf: document.getElementById("fShelf").value === "__new__" ? "" : document.getElementById("fShelf").value,
     favorite: currentFavorite,
@@ -2000,7 +1862,7 @@ document.getElementById("resetBtn").onclick = ()=>{
 };
 
 document.getElementById("exportBtn").onclick = ()=>{
-  const payload = { app:"doujin-books", version:4, exportedAt:new Date().toISOString(), books, shelves, profile, rates };
+  const payload = { app:"doujin-books", version:4, exportedAt:new Date().toISOString(), books, shelves, profile };
   const blob = new Blob([JSON.stringify(payload, null, 2)], {type:"application/json"});
   const stamp = new Date().toISOString().slice(0,10);
   downloadBlob(blob, `同人藏書誌備份_${stamp}.json`);
@@ -2020,7 +1882,6 @@ document.getElementById("importFile").onchange = (e)=>{
       return;
     }
 
-    // Single-book share: {app:"doujin-books-single", book:{...}}
     if(parsed && typeof parsed === "object" && parsed.book && typeof parsed.book === "object"){
       const nb = sanitizeBookData(parsed.book, false);
       const ok = confirm(`要把《${nb.title || "這本書"}》加入你的收藏嗎？`);
@@ -2035,7 +1896,6 @@ document.getElementById("importFile").onchange = (e)=>{
       return;
     }
 
-    // Full backup: {books:[...], shelves:[...], profile:{...}, rates:{...}} or a bare array
     const rawList = Array.isArray(parsed) ? parsed : parsed.books;
     if(!Array.isArray(rawList)){
       alert("這個檔案格式看起來不對，請確認選擇的是本工具匯出的備份檔。");
@@ -2055,7 +1915,6 @@ document.getElementById("importFile").onchange = (e)=>{
       books = sanitizedBooks;
       shelves = newShelves;
       if(parsed && parsed.profile) profile = sanitizeProfile(parsed.profile);
-      if(parsed && parsed.rates) rates = sanitizeRates(parsed.rates);
       persist();
       applyProfile();
       render();
@@ -2075,16 +1934,14 @@ function csvEscape(v){
 }
 
 document.getElementById("downloadCsvBtn").onclick = ()=>{
-  const headers = ["書名","社團","作者(可用、分隔多位)","作品","配對(可用、分隔多組)","價格","幣別(TWD/JPY/CNY/KRW)","書櫃","類型(漫畫/小說/畫冊/其他)","最愛(是/否)","購買連結","備註"];
-  const example = ["無題的青春","某某工房","春河35、朝霧卡夫卡","原創","","350","TWD","","漫畫","否","",""];
+  const headers = ["書名","作者(可用、分隔多位)","作品","配對(可用、分隔多組)","書櫃","類型(漫畫/小說/畫冊/其他)","最愛(是/否)","備註"];
+  const example = ["無題的青春","春河35、朝霧卡夫卡","原創","","","漫畫","否",""];
   const rows = [headers, example];
   const csv = rows.map(r=>r.map(csvEscape).join(",")).join("\r\n");
   const blob = new Blob(["\uFEFF"+csv], {type:"text/csv;charset=utf-8;"});
   downloadBlob(blob, "同人藏書誌_匯入範本.csv");
 };
 
-// Minimal RFC4180-ish CSV parser: handles quoted fields, escaped quotes ("")
-// inside them, and commas/newlines within quotes.
 function parseCSV(text){
   const rows = [];
   let row = [], field = "", inQuotes = false;
@@ -2124,9 +1981,9 @@ document.getElementById("importCsvFile").onchange = (e)=>{
     }
     const header = rows[0].map(h=>h.trim());
     const idx = (name)=> header.findIndex(h=>h.indexOf(name)===0);
-    const cTitle=idx("書名"), cCircle=idx("社團"), cAuthors=idx("作者"), cWork=idx("作品"),
-          cPairings=idx("配對"), cPrice=idx("價格"), cCurrency=idx("幣別"), cShelf=idx("書櫃"),
-          cType=idx("類型"), cFav=idx("最愛"), cLink=idx("購買連結"), cNote=idx("備註");
+    const cTitle=idx("書名"), cAuthors=idx("作者"), cWork=idx("作品"),
+          cPairings=idx("配對"), cShelf=idx("書櫃"),
+          cType=idx("類型"), cFav=idx("最愛"), cNote=idx("備註");
     if(cTitle === -1){
       alert("找不到「書名」欄位，請使用範本檔案的欄位名稱，不要更改標題列。");
       e.target.value = "";
@@ -2139,17 +1996,12 @@ document.getElementById("importCsvFile").onchange = (e)=>{
       .map(r=>{
         const title = get(r,cTitle);
         if(!title) return null;
-        const currencyRaw = get(r,cCurrency).toUpperCase();
         const typeRaw = get(r,cType);
         return sanitizeBookData({
           title,
-          circle: get(r,cCircle),
           authors: splitList(get(r,cAuthors)),
           work: get(r,cWork),
           pairings: splitList(get(r,cPairings)),
-          price: get(r,cPrice).replace(/[^\d.]/g,""),
-          currency: VALID_CURRENCIES.includes(currencyRaw) ? currencyRaw : "TWD",
-          link: get(r,cLink),
           note: get(r,cNote),
           shelf: get(r,cShelf),
           type: FIXED_TYPES.includes(typeRaw) ? typeRaw : "",
