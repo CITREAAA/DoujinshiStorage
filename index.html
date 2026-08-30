@@ -1,0 +1,2188 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>同人藏書誌</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;600;700&family=Noto+Serif+TC:wght@500;600;700&family=Noto+Sans+SC:wght@400;600;700&family=Noto+Serif+SC:wght@500;600;700&family=Noto+Sans+JP:wght@400;600;700&family=Noto+Serif+JP:wght@500;600;700&family=Noto+Sans+KR:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#EDE9E0;
+    --card:#FBF9F5;
+    --ink:#2C3550;
+    --ink-soft:#6B7086;
+    --stamp:#A63D40;
+    --gold:#B08D57;
+    --line:#D8D2C4;
+    --font-serif:"Noto Serif TC","Songti TC","PMingLiU",serif;
+    --font-sans:"Noto Sans TC","PingFang TC","Microsoft JhengHei",sans-serif;
+    --font-mono:"SF Mono","Courier New",monospace;
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+  body{
+    margin:0;
+    background:var(--paper);
+    background-image:
+      radial-gradient(circle at 1px 1px, rgba(44,53,80,0.05) 1px, transparent 0);
+    background-size:16px 16px;
+    font-family:var(--font-sans);
+    color:var(--ink);
+    min-height:100vh;
+    padding-bottom:100px;
+  }
+  header{
+    padding:28px 20px 16px;
+    position:relative;
+  }
+  .profile-line{
+    display:flex;
+    align-items:center;
+    gap:8px;
+    margin-bottom:8px;
+    font-family:var(--font-mono);
+    font-size:12px;
+    color:var(--ink-soft);
+  }
+  .avatar-mini{
+    width:28px;height:28px;
+    border-radius:50%;
+    object-fit:cover;
+    border:1px solid var(--line);
+  }
+  header .eyebrow{
+    font-family:var(--font-mono);
+    font-size:11px;
+    letter-spacing:.12em;
+    color:var(--ink-soft);
+    text-transform:uppercase;
+  }
+  h1{
+    font-family:var(--font-serif);
+    font-size:28px;
+    margin:4px 0 2px;
+    letter-spacing:.02em;
+  }
+  .stats{
+    display:flex;
+    flex-wrap:wrap;
+    gap:6px 18px;
+    margin-top:12px;
+    font-family:var(--font-mono);
+    font-size:13px;
+    color:var(--ink-soft);
+  }
+  .stats b{color:var(--ink);font-size:15px;}
+  .header-actions{
+    display:flex;
+    flex-wrap:wrap;
+    gap:8px;
+    margin-top:14px;
+  }
+  .mini-btn{
+    background:none;
+    border:1px solid var(--line);
+    border-radius:20px;
+    padding:6px 12px;
+    font-family:var(--font-mono);
+    font-size:11px;
+    color:var(--ink-soft);
+    display:inline-block;
+  }
+  .toolbar{
+    padding:0 20px 8px;
+    display:flex;
+    flex-direction:column;
+    gap:6px;
+  }
+  .search-row{
+    display:flex;
+    gap:8px;
+    margin-bottom:6px;
+  }
+  .search-box{
+    display:flex;
+    align-items:center;
+    background:var(--card);
+    border:1px solid var(--line);
+    border-radius:10px;
+    padding:10px 14px;
+    flex:1;
+    min-width:0;
+  }
+  .search-box input{
+    border:none;
+    background:none;
+    outline:none;
+    width:100%;
+    font-size:15px;
+    font-family:var(--font-sans);
+    color:var(--ink);
+  }
+  .search-box svg{flex-shrink:0;margin-right:8px;}
+  .sort-select{
+    flex-shrink:0;
+    border:1px solid var(--line);
+    border-radius:10px;
+    background:var(--card);
+    color:var(--ink);
+    font-family:var(--font-mono);
+    font-size:11px;
+    padding:0 8px;
+    max-width:108px;
+  }
+  .filter-select{
+    width:100%;
+    border:1px solid var(--line);
+    border-radius:10px;
+    background:var(--card);
+    color:var(--ink);
+    font-family:var(--font-mono);
+    font-size:12px;
+    padding:8px 10px;
+  }
+  .shelf-badge{
+    display:inline-block;
+    padding:1px 8px;
+    border-radius:10px;
+    font-size:12px;
+  }
+  .view-toggle{
+    display:flex;
+    gap:8px;
+    margin-bottom:2px;
+  }
+  .view-toggle .chip{cursor:pointer;}
+  .filter-label{
+    font-family:var(--font-mono);
+    font-size:10px;
+    color:var(--ink-soft);
+    letter-spacing:.08em;
+    margin:4px 0 -2px 2px;
+  }
+  .chips{
+    display:flex;
+    gap:8px;
+    overflow-x:auto;
+    padding-bottom:4px;
+  }
+  .chips::-webkit-scrollbar{display:none;}
+  .chip{
+    flex-shrink:0;
+    font-family:var(--font-mono);
+    font-size:12px;
+    padding:6px 12px;
+    border-radius:20px;
+    border:1px solid var(--line);
+    background:var(--card);
+    color:var(--ink-soft);
+    white-space:nowrap;
+  }
+  .chip.active{
+    background:var(--ink);
+    border-color:var(--ink);
+    color:var(--card);
+  }
+  #list{
+    padding:12px 20px;
+    display:flex;
+    flex-direction:column;
+    gap:16px;
+  }
+  .card{
+    background:var(--card);
+    border:1px solid var(--line);
+    border-radius:4px;
+    position:relative;
+    padding:18px 18px 16px;
+    box-shadow:0 1px 2px rgba(44,53,80,0.06);
+  }
+  .card::before{
+    content:"";
+    position:absolute;
+    top:-1px;left:0;right:0;height:6px;
+    background-image:radial-gradient(circle 3px, var(--paper) 3px, transparent 0);
+    background-size:14px 6px;
+    background-position:7px 0;
+  }
+  .card-top{
+    display:flex;
+    justify-content:space-between;
+    align-items:flex-start;
+  }
+  .card-body{
+    display:flex;
+    gap:12px;
+  }
+  .thumb{
+    flex-shrink:0;
+    width:64px;
+    height:86px;
+    border-radius:3px;
+    object-fit:cover;
+    border:1px solid var(--line);
+    background:var(--paper);
+  }
+  .card-text{flex:1;min-width:0;}
+  .cat-no{
+    font-family:var(--font-mono);
+    font-size:11px;
+    color:var(--stamp);
+    letter-spacing:.05em;
+  }
+  .card-actions{display:flex;gap:6px;}
+  .icon-btn{
+    background:none;border:none;color:var(--ink-soft);
+    padding:2px 4px;font-size:15px;line-height:1;
+  }
+  .icon-btn:active{color:var(--stamp);}
+  .title{
+    font-family:var(--font-serif);
+    font-size:20px;
+    margin:6px 0 2px;
+    line-height:1.3;
+  }
+  .meta-line{
+    font-size:13px;
+    color:var(--ink-soft);
+    margin-bottom:10px;
+  }
+  .meta-line span.label{
+    font-family:var(--font-mono);
+    font-size:10px;
+    color:var(--gold);
+    margin-right:4px;
+  }
+  .pairing-pill{
+    display:inline-block;
+    border:1px dashed var(--gold);
+    border-radius:20px;
+    padding:6px 16px;
+    font-family:var(--font-serif);
+    font-size:15px;
+    color:var(--ink);
+    background:rgba(176,141,87,0.06);
+  }
+  .card-extra{
+    margin-top:10px;
+    font-size:12px;
+    color:var(--ink-soft);
+    white-space:pre-wrap;
+    line-height:1.5;
+  }
+  .card-link{
+    display:inline-block;
+    margin-top:8px;
+    font-size:12px;
+    color:var(--gold);
+    text-decoration:underline;
+  }
+  .card-bottom{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-top:14px;
+    border-top:1px dashed var(--line);
+    padding-top:10px;
+  }
+  .price{
+    font-family:var(--font-mono);
+    font-size:16px;
+    font-weight:bold;
+    color:var(--ink);
+  }
+  .stamp-mark{
+    font-family:var(--font-mono);
+    font-size:10px;
+    color:var(--stamp);
+    border:1.5px solid var(--stamp);
+    border-radius:3px;
+    padding:2px 6px;
+    transform:rotate(-6deg);
+    letter-spacing:.08em;
+    opacity:.75;
+  }
+  .empty{
+    text-align:center;
+    padding:60px 20px;
+    color:var(--ink-soft);
+  }
+  .empty .big{
+    font-family:var(--font-serif);
+    font-size:20px;
+    color:var(--ink);
+    margin-bottom:6px;
+  }
+  .fab{
+    position:fixed;
+    bottom:24px;
+    right:24px;
+    width:56px;height:56px;
+    border-radius:50%;
+    background:var(--ink);
+    color:var(--card);
+    border:none;
+    font-size:26px;
+    box-shadow:0 4px 14px rgba(44,53,80,0.35);
+    display:flex;align-items:center;justify-content:center;
+    z-index:5;
+  }
+  .sheet-overlay{
+    position:fixed;inset:0;
+    background:rgba(44,53,80,0.35);
+    display:none;
+    align-items:flex-end;
+    z-index:10;
+  }
+  .sheet-overlay.open{display:flex;}
+  .sheet{
+    background:var(--paper);
+    width:100%;
+    border-radius:16px 16px 0 0;
+    padding:20px 20px calc(20px + env(safe-area-inset-bottom));
+    max-height:88vh;
+    overflow-y:auto;
+  }
+  .sheet h2{
+    font-family:var(--font-serif);
+    font-size:20px;
+    margin:0 0 16px;
+  }
+  .settings-section{
+    font-family:var(--font-mono);
+    font-size:11px;
+    color:var(--gold);
+    letter-spacing:.08em;
+    text-transform:uppercase;
+    margin:22px 0 10px;
+    border-top:1px dashed var(--line);
+    padding-top:16px;
+  }
+  .settings-section:first-of-type{margin-top:0;border-top:none;padding-top:0;}
+  .settings-btn-row{
+    display:flex;
+    gap:8px;
+    flex-wrap:wrap;
+    margin-bottom:6px;
+  }
+  .help-body h4{
+    font-family:var(--font-serif);
+    font-size:15px;
+    margin:18px 0 4px;
+    color:var(--ink);
+  }
+  .help-body h4:first-child{margin-top:0;}
+  .help-body p{
+    font-size:13px;
+    color:var(--ink-soft);
+    line-height:1.6;
+    margin:0 0 4px;
+  }
+  .field{margin-bottom:14px;}
+  .field label{
+    display:block;
+    font-family:var(--font-mono);
+    font-size:11px;
+    color:var(--ink-soft);
+    margin-bottom:5px;
+    letter-spacing:.05em;
+  }
+  .field input, .field textarea, .field select{
+    width:100%;
+    padding:11px 12px;
+    border:1px solid var(--line);
+    border-radius:8px;
+    font-size:15px;
+    background:var(--card);
+    font-family:var(--font-sans);
+    color:var(--ink);
+    outline:none;
+  }
+  .field textarea{resize:vertical;min-height:56px;font-family:var(--font-sans);}
+  .field input:focus, .field textarea:focus, .field select:focus{border-color:var(--gold);}
+  .field .hint{
+    font-size:11px;
+    color:var(--ink-soft);
+    margin-top:5px;
+    line-height:1.4;
+  }
+  .price-row{display:flex;gap:8px;}
+  .price-row input{flex:1.4;}
+  .price-row select{flex:1;padding:11px 6px;}
+  .tag-chips{
+    display:flex;
+    gap:6px;
+    overflow-x:auto;
+    margin-top:8px;
+    padding-bottom:2px;
+  }
+  .tag-chips::-webkit-scrollbar{display:none;}
+  .tag-chip{
+    flex-shrink:0;
+    font-family:var(--font-mono);
+    font-size:11px;
+    padding:5px 11px;
+    border-radius:14px;
+    border:1px solid var(--line);
+    background:var(--card);
+    color:var(--ink-soft);
+    white-space:nowrap;
+  }
+  .tag-chip.selected{
+    background:var(--gold);
+    border-color:var(--gold);
+    color:var(--card);
+  }
+  .multi-input-row{
+    display:flex;
+    gap:8px;
+  }
+  .multi-input-row input{
+    flex:1;
+    min-width:0;
+    padding:13px 14px;
+    font-size:16px;
+  }
+  .add-tag-btn{
+    flex-shrink:0;
+    min-width:64px;
+    padding:0 14px;
+    border-radius:8px;
+    border:1px solid var(--line);
+    background:var(--ink);
+    color:var(--card);
+    font-family:var(--font-sans);
+    font-size:14px;
+  }
+  .selected-chip{
+    display:inline-flex;
+    align-items:center;
+    gap:6px;
+  }
+  .selected-chip .remove-x{
+    font-weight:bold;
+    opacity:.8;
+  }
+  .photo-picker{
+    display:flex;
+    align-items:center;
+    gap:12px;
+  }
+  .photo-preview{
+    width:72px;
+    height:96px;
+    border-radius:4px;
+    border:1px dashed var(--line);
+    background:var(--card);
+    object-fit:cover;
+    flex-shrink:0;
+  }
+  .photo-preview.empty{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    color:var(--ink-soft);
+    font-size:11px;
+    font-family:var(--font-mono);
+    text-align:center;
+  }
+  .photo-buttons{
+    display:flex;
+    flex-direction:column;
+    gap:8px;
+    flex:1;
+  }
+  .photo-btn{
+    padding:9px 12px;
+    border-radius:8px;
+    border:1px solid var(--line);
+    background:var(--card);
+    font-size:13px;
+    font-family:var(--font-sans);
+    color:var(--ink);
+    text-align:center;
+  }
+  .photo-btn.remove{color:var(--stamp);border-color:var(--stamp);}
+  .favorite-toggle{
+    width:100%;
+    padding:12px;
+    border-radius:8px;
+    border:1px solid var(--line);
+    background:var(--card);
+    font-family:var(--font-sans);
+    font-size:14px;
+    color:var(--ink);
+    text-align:center;
+  }
+  .favorite-toggle.active{
+    background:var(--stamp);
+    border-color:var(--stamp);
+    color:var(--card);
+  }
+  .shelf-row{
+    padding:12px 2px;
+    border-bottom:1px dashed var(--line);
+    font-size:14px;
+  }
+  .shelf-row:last-child{border-bottom:none;}
+  .shelf-row-top{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:8px;
+  }
+  .shelf-row .icon-btn{font-size:15px;}
+  .shelf-color-row{
+    display:flex;
+    gap:16px;
+    align-items:center;
+  }
+  .color-field{
+    display:flex;
+    align-items:center;
+    gap:6px;
+  }
+  .color-field label{
+    font-family:var(--font-mono);
+    font-size:10px;
+    color:var(--ink-soft);
+  }
+  .color-field input[type=color]{
+    width:28px;
+    height:28px;
+    border:1px solid var(--line);
+    border-radius:6px;
+    padding:0;
+    background:none;
+  }
+  .sheet-actions{
+    display:flex;
+    gap:10px;
+    margin-top:8px;
+  }
+  .btn{
+    flex:1;
+    padding:13px;
+    border-radius:8px;
+    border:none;
+    font-size:15px;
+    font-family:var(--font-sans);
+    font-weight:600;
+  }
+  .btn-cancel{background:var(--card);border:1px solid var(--line);color:var(--ink-soft);}
+  .btn-save{background:var(--ink);color:var(--card);}
+  .confirm-overlay{
+    position:fixed;inset:0;
+    background:rgba(44,53,80,0.35);
+    display:none;
+    align-items:center;justify-content:center;
+    z-index:20;
+    padding:30px;
+  }
+  .confirm-overlay.open{display:flex;}
+  .confirm-box{
+    background:var(--card);
+    border-radius:10px;
+    padding:22px;
+    max-width:300px;
+    text-align:center;
+  }
+  .confirm-box p{font-size:14px;color:var(--ink-soft);margin:8px 0 18px;}
+  .loading{padding:60px;text-align:center;color:var(--ink-soft);font-family:var(--font-mono);font-size:12px;}
+
+  /* --- shelf display (陳列) view: colored cube shelf --- */
+  .shelf-unit{
+    margin:0 20px 20px;
+    border-radius:6px;
+    overflow:hidden;
+    border:3px solid #F3EFE6;
+    background:#F3EFE6;
+    box-shadow:0 4px 12px rgba(44,53,80,0.15);
+  }
+  .shelf-name-banner{
+    padding:14px 16px;
+    font-family:var(--font-serif);
+    font-size:18px;
+    font-weight:600;
+    text-align:center;
+    border-bottom:2px solid rgba(0,0,0,0.18);
+  }
+  .shelf-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fill, minmax(96px, 1fr));
+    gap:4px;
+    background:#F3EFE6;
+  }
+  .shelf-item{
+    position:relative;
+    aspect-ratio:1/1.06;
+    background:var(--cell-color, #B08D57);
+    display:flex;
+    align-items:flex-end;
+    justify-content:center;
+    padding:8px 8px 10px;
+    cursor:pointer;
+  }
+  .shelf-cover-wrap{
+    position:relative;
+    width:78%;
+  }
+  .shelf-cover{
+    width:100%;
+    aspect-ratio:2/3;
+    object-fit:cover;
+    border-radius:1px;
+    border:1px solid rgba(0,0,0,0.25);
+    box-shadow:0 6px 10px rgba(0,0,0,0.4);
+    transform:rotate(-1.2deg);
+    display:block;
+  }
+  .shelf-cover-placeholder{
+    width:100%;
+    aspect-ratio:2/3;
+    border-radius:1px;
+    border:1px solid rgba(0,0,0,0.25);
+    background:var(--card);
+    box-shadow:0 6px 10px rgba(0,0,0,0.4);
+    transform:rotate(-1.2deg);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:6px;
+  }
+  .shelf-cover-placeholder span{
+    font-family:var(--font-serif);
+    font-size:10px;
+    color:var(--ink-soft);
+    line-height:1.3;
+    display:-webkit-box;
+    -webkit-line-clamp:4;
+    -webkit-box-orient:vertical;
+    overflow:hidden;
+  }
+  .shelf-star{
+    position:absolute;
+    top:-8px;
+    right:-6px;
+    font-size:15px;
+    filter:drop-shadow(0 1px 2px rgba(0,0,0,.6));
+  }
+  .shelf-title{
+    margin:8px 4px 10px;
+    font-size:10.5px;
+    color:var(--ink-soft);
+    text-align:center;
+    line-height:1.3;
+    display:-webkit-box;
+    -webkit-line-clamp:1;
+    -webkit-box-orient:vertical;
+    overflow:hidden;
+    background:#F3EFE6;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="profile-line" id="profileLine" style="display:none;">
+    <img class="avatar-mini" id="avatarMini">
+    <span id="nicknameMini"></span>
+  </div>
+  <div class="eyebrow">DOUJIN CATALOG</div>
+  <h1 id="appTitle">同人藏書誌</h1>
+  <div class="stats" id="statsBar"></div>
+  <div class="header-actions">
+    <button class="mini-btn" id="helpBtn">❓ 使用說明</button>
+    <button class="mini-btn" id="settingsBtn">⚙️ 設定</button>
+  </div>
+</header>
+
+<div class="toolbar">
+  <div class="search-row">
+    <div class="search-box">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#6B7086" stroke-width="2"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      <input id="searchInput" placeholder="搜尋書名、作者、配對...">
+    </div>
+    <select class="sort-select" id="sortSelect">
+      <option value="created_desc">新增時間（新→舊）</option>
+      <option value="created_asc">新增時間（舊→新）</option>
+      <option value="price_desc">價格（高→低）</option>
+      <option value="price_asc">價格（低→高）</option>
+      <option value="title">書名</option>
+    </select>
+  </div>
+  <div class="view-toggle">
+    <div class="chip active" id="viewListBtn">📋 清單</div>
+    <div class="chip" id="viewShelfBtn">🗄️ 陳列</div>
+  </div>
+  <div class="filter-label">書櫃</div>
+  <div class="chips" id="chipsShelf"></div>
+  <div class="chips">
+    <div class="chip" id="favoriteFilterChip">⭐ 只看我的最愛</div>
+  </div>
+  <div class="filter-label">類型</div>
+  <div class="chips" id="chipsType"></div>
+  <div class="filter-label">作品</div>
+  <select class="filter-select" id="filterWorkSelect"></select>
+  <div class="filter-label">配對</div>
+  <select class="filter-select" id="filterPairingSelect"></select>
+</div>
+
+<div id="list">
+  <div class="loading">讀取中...</div>
+</div>
+
+<button class="fab" id="addFab">＋</button>
+
+<div class="sheet-overlay" id="sheetOverlay">
+  <div class="sheet">
+    <h2 id="sheetTitle">新增書籍</h2>
+
+    <h3 class="settings-section">封面與分類</h3>
+    <div class="field">
+      <label>封面照</label>
+      <div class="photo-picker">
+        <img class="photo-preview" id="photoPreview">
+        <div class="photo-buttons">
+          <label class="photo-btn" for="photoCamera">拍照</label>
+          <label class="photo-btn" for="photoUpload">從相簿選擇</label>
+          <div class="photo-btn remove" id="photoRemoveBtn" style="display:none;">移除照片</div>
+        </div>
+        <input type="file" id="photoCamera" accept="image/*" capture="environment" style="display:none;">
+        <input type="file" id="photoUpload" accept="image/*" style="display:none;">
+      </div>
+    </div>
+    <div class="field">
+      <label>類型</label>
+      <div class="chips" id="typeChoiceChips"></div>
+    </div>
+    <div class="field">
+      <label>書櫃分類</label>
+      <select id="fShelf"></select>
+    </div>
+    <div class="field">
+      <button type="button" class="favorite-toggle" id="favoriteToggle">☆ 加入我的最愛</button>
+    </div>
+
+    <h3 class="settings-section">基本資料</h3>
+    <div class="field">
+      <label>書名 *</label>
+      <input id="fTitle" placeholder="例如：無題的青春">
+    </div>
+    <div class="field">
+      <label>社團</label>
+      <input id="fCircle" placeholder="例如：某某工房">
+      <div class="tag-chips" id="circleTagChips"></div>
+    </div>
+    <div class="field">
+      <label>作者（可複選，合輯可填多位）</label>
+      <div class="tag-chips" id="authorSelectedChips"></div>
+      <div class="multi-input-row">
+        <input id="fAuthorInput" placeholder="輸入作者名稱">
+        <button type="button" class="add-tag-btn" id="addAuthorBtn">新增</button>
+      </div>
+      <div class="tag-chips" id="authorSuggestChips"></div>
+    </div>
+    <div class="field">
+      <label>作品（原作）</label>
+      <input id="fWork" placeholder="例如：某動畫 / 原創">
+      <div class="tag-chips" id="workTagChips"></div>
+    </div>
+
+    <h3 class="settings-section">配對</h3>
+    <div class="field">
+      <div class="tag-chips" id="pairingSelectedChips"></div>
+      <div class="multi-input-row">
+        <input id="fPairingInput" placeholder="例如：角色A × 角色B">
+        <button type="button" class="add-tag-btn" id="addPairingBtn">新增</button>
+      </div>
+      <div class="tag-chips" id="pairingSuggestChips"></div>
+    </div>
+
+    <h3 class="settings-section">交易資訊</h3>
+    <div class="field">
+      <label>價格</label>
+      <div class="price-row">
+        <input id="fPrice" type="number" inputmode="decimal" placeholder="例如：350">
+        <select id="fCurrency">
+          <option value="TWD">NT$ 台幣</option>
+          <option value="JPY">¥ 日幣</option>
+          <option value="CNY">CN¥ 人民幣</option>
+          <option value="KRW">₩ 韓元</option>
+        </select>
+      </div>
+    </div>
+    <div class="field">
+      <label>購買連結</label>
+      <input id="fLink" type="url" placeholder="https://...">
+    </div>
+
+    <h3 class="settings-section">備註</h3>
+    <div class="field">
+      <textarea id="fNote" placeholder="任何想記下來的事"></textarea>
+    </div>
+
+    <div class="sheet-actions">
+      <button class="btn btn-cancel" id="cancelBtn">取消</button>
+      <button class="btn btn-save" id="saveBtn">儲存</button>
+    </div>
+  </div>
+</div>
+
+<div class="confirm-overlay" id="confirmOverlay">
+  <div class="confirm-box">
+    <div style="font-family:var(--font-serif);font-size:16px;">確定要刪除嗎？</div>
+    <p id="confirmText"></p>
+    <div class="sheet-actions">
+      <button class="btn btn-cancel" id="confirmCancel">取消</button>
+      <button class="btn btn-save" style="background:var(--stamp)" id="confirmOk">刪除</button>
+    </div>
+  </div>
+</div>
+
+<div class="sheet-overlay" id="shelfManageOverlay">
+  <div class="sheet">
+    <h2>管理書櫃</h2>
+    <div class="multi-input-row">
+      <input id="newShelfInput" placeholder="輸入新書櫃名稱">
+      <button type="button" class="add-tag-btn" id="addShelfBtn">新增</button>
+    </div>
+    <div id="shelfManageList" style="margin-top:14px;"></div>
+    <div class="sheet-actions">
+      <button class="btn btn-cancel" id="shelfManageCloseBtn">完成</button>
+    </div>
+  </div>
+</div>
+
+<div class="sheet-overlay" id="settingsOverlay">
+  <div class="sheet">
+    <h2>設定</h2>
+
+    <h3 class="settings-section">個人化</h3>
+    <div class="field">
+      <label>大頭貼</label>
+      <div class="photo-picker">
+        <img class="photo-preview empty" id="avatarPreview" style="border-radius:50%;width:64px;height:64px;">
+        <div class="photo-buttons">
+          <label class="photo-btn" for="avatarUpload">選擇圖片</label>
+          <div class="photo-btn remove" id="avatarRemoveBtn" style="display:none;">移除大頭貼</div>
+        </div>
+        <input type="file" id="avatarUpload" accept="image/*" style="display:none;">
+      </div>
+    </div>
+    <div class="field">
+      <label>暱稱</label>
+      <input id="nicknameInput" placeholder="例如：小藍">
+    </div>
+    <div class="field">
+      <label>頁面標題</label>
+      <input id="titleInput" placeholder="同人藏書誌">
+    </div>
+
+    <h3 class="settings-section">外觀 / 字體</h3>
+    <div class="field">
+      <label>標題字體（內建 7 種）</label>
+      <select id="fontSelect">
+        <option value="notoSerifTC">襯線・繁中（Noto Serif TC）</option>
+        <option value="notoSansTC">黑體・繁中（Noto Sans TC）</option>
+        <option value="notoSerifSC">襯線・簡中（Noto Serif SC）</option>
+        <option value="notoSansSC">黑體・簡中（Noto Sans SC）</option>
+        <option value="notoSansJP">黑體・日文（Noto Sans JP）</option>
+        <option value="notoSerifJP">明朝・日文（Noto Serif JP）</option>
+        <option value="notoSansKR">黑體・韓文（Noto Sans KR）</option>
+      </select>
+    </div>
+    <div class="field" id="customFontOptionRow" style="display:none;">
+      <label>目前上傳的自訂字體</label>
+      <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
+        <span id="customFontNameLabel" style="font-size:13px;"></span>
+        <button type="button" class="mini-btn" id="useCustomFontBtn">套用</button>
+        <button type="button" class="mini-btn" id="removeCustomFontBtn" style="color:var(--stamp);border-color:var(--stamp);">移除</button>
+      </div>
+    </div>
+    <div class="field">
+      <label>上傳自訂字體檔案</label>
+      <label class="photo-btn" for="customFontUpload" style="display:block;text-align:center;">選擇字體檔案 (.ttf/.otf/.woff/.woff2)</label>
+      <input type="file" id="customFontUpload" accept=".ttf,.otf,.woff,.woff2" style="display:none;">
+      <div class="hint">建議 1.5MB 以內。手機瀏覽器能存的空間有限，完整的中日韓字體檔通常很大，太大可能會影響書籍資料的儲存空間，建議挑選較小的字型檔或子集版本。</div>
+    </div>
+
+    <h3 class="settings-section">書櫃</h3>
+    <button type="button" class="mini-btn" id="manageShelvesBtn" style="width:100%;padding:10px;">管理書櫃 / 顏色</button>
+
+    <h3 class="settings-section">幣別匯率（僅供價格排序換算參考，非即時匯率）</h3>
+    <div class="field">
+      <label>1 日圓（JPY）＝ 多少台幣</label>
+      <input type="number" step="0.001" id="rateJPY">
+    </div>
+    <div class="field">
+      <label>1 人民幣（CNY）＝ 多少台幣</label>
+      <input type="number" step="0.001" id="rateCNY">
+    </div>
+    <div class="field">
+      <label>1 韓元（KRW）＝ 多少台幣</label>
+      <input type="number" step="0.001" id="rateKRW">
+    </div>
+
+    <h3 class="settings-section">資料備份</h3>
+    <div class="settings-btn-row">
+      <button class="mini-btn" id="exportBtn">匯出備份</button>
+      <label class="mini-btn" for="importFile">匯入備份</label>
+      <input type="file" id="importFile" accept="application/json,.json" style="display:none;">
+    </div>
+
+    <h3 class="settings-section">Excel 搬遷</h3>
+    <div class="settings-btn-row">
+      <button class="mini-btn" id="downloadCsvBtn">下載Excel範本</button>
+      <label class="mini-btn" for="importCsvFile">匯入Excel</label>
+      <input type="file" id="importCsvFile" accept=".csv,text/csv" style="display:none;">
+    </div>
+
+    <h3 class="settings-section" style="color:var(--stamp);">危險區域</h3>
+    <button class="mini-btn" id="resetBtn" style="border-color:var(--stamp);color:var(--stamp);">清空全部</button>
+
+    <div class="sheet-actions">
+      <button class="btn btn-save" id="settingsCloseBtn">完成</button>
+    </div>
+  </div>
+</div>
+
+<div class="sheet-overlay" id="helpOverlay">
+  <div class="sheet help-body">
+    <h2>使用說明</h2>
+
+    <h4>新增書籍</h4>
+    <p>點右下角「＋」新增。可以填：封面照、類型（漫畫／小說／畫冊／其他）、書櫃分類、我的最愛、書名、社團、作者（可複選，合輯可填多位）、作品、配對（可複選，合輯可填多組）、價格與幣別、購買連結、備註。只有書名是必填。</p>
+
+    <h4>標籤與快速選取</h4>
+    <p>社團、作品、配對、作者這幾欄，只要你輸入過一次，之後在欄位下方就會出現可以直接點選的標籤，不用每次重打。</p>
+
+    <h4>書櫃</h4>
+    <p>在「設定 → 書櫃」裡新增、改名、刪除書櫃，並分別設定書櫃的底色與名稱文字顏色。切到「陳列」檢視時，書會依書櫃顏色排在對應顏色的格子裡。</p>
+
+    <h4>檢視與排序</h4>
+    <p>搜尋列下方可以切換「清單」或「陳列」檢視。右上角的排序選單可依新增時間、價格、書名排序；價格排序會依「設定」裡填寫的匯率，先換算成台幣等值再比較大小。</p>
+
+    <h4>篩選與搜尋</h4>
+    <p>可依書櫃、我的最愛、類型、作品、配對篩選，篩選後上方的「本數／花費」統計也會跟著更新。搜尋框可直接搜書名、作者、配對關鍵字。</p>
+
+    <h4>分享單本書</h4>
+    <p>每張書籍卡片右上角的「⇪」可以把這一本書匯出成一個小檔案，傳給同樣使用這個工具的朋友，對方用「匯入備份」就能把這本書加進他自己的收藏（不會動到他原本的資料）。</p>
+
+    <h4>備份與資料搬家</h4>
+    <p>「匯出備份」會把所有資料（書籍、照片、書櫃、設定）打包成一個檔案，請妥善保存；「匯入備份」用來還原，會取代目前所有資料。如果你原本用 Excel／表格記錄，可以「下載Excel範本」照欄位填好，再用「匯入Excel」整批新增（不含封面照片，之後需要另外手動補上）。</p>
+
+    <h4>個人化</h4>
+    <p>可以設定暱稱、大頭貼、頁面標題，以及標題字體（7 種內建，涵蓋繁中／簡中／日文／韓文），也可以上傳自己喜歡的字體檔案。</p>
+
+    <h4>資料放在哪裡</h4>
+    <p>所有資料都只存在你這支手機的瀏覽器裡，不會上傳到任何地方，我們也看不到。清除瀏覽器的「瀏覽資料」前，請務必先「匯出備份」，否則資料會遺失。</p>
+
+    <div class="sheet-actions" style="margin-top:20px;">
+      <button class="btn btn-save" id="helpCloseBtn">關閉</button>
+    </div>
+  </div>
+</div>
+
+<script>
+let books = [];
+let shelves = [];
+let profile = { nickname:"", title:"", avatar:null, font:"notoSerifTC", customFontData:null, customFontName:"" };
+let rates = { JPY:0.21, CNY:4.4, KRW:0.023 };
+let editingId = null;
+let deleteTarget = null;
+let activeWorkFilter = "全部";
+let activePairingFilter = "全部";
+let activeShelfFilter = "全部";
+let activeTypeFilter = "全部";
+let activeFavoriteOnly = false;
+let sortMode = "created_desc";
+let viewMode = "list";
+let currentPhoto = null;
+let currentAuthors = [];
+let currentPairings = [];
+let currentFavorite = false;
+let currentType = "";
+
+const STORAGE_KEY = "doujin_books_v2";
+const MAX_DIM = 640;
+const JPEG_QUALITY = 0.6;
+const CURRENCY_SYMBOLS = { TWD:"NT$", JPY:"¥", CNY:"CN¥", KRW:"₩" };
+const CURRENCY_ORDER = ["TWD","JPY","CNY","KRW"];
+const VALID_CURRENCIES = ["TWD","JPY","CNY","KRW"];
+const DEFAULT_SHELF_COLOR = "#B08D57";
+const DEFAULT_SHELF_TEXT = "#2C3550";
+const DEFAULT_RATES = { JPY:0.21, CNY:4.4, KRW:0.023 };
+const FIXED_TYPES = ["漫畫","小說","畫冊","其他"];
+const KNOWN_FONTS = ["notoSerifTC","notoSansTC","notoSerifSC","notoSansSC","notoSansJP","notoSerifJP","notoSansKR"];
+const FONT_STACKS = {
+  notoSerifTC: `"Noto Serif TC","Songti TC","PMingLiU",serif`,
+  notoSansTC: `"Noto Sans TC","PingFang TC","Microsoft JhengHei",sans-serif`,
+  notoSerifSC: `"Noto Serif SC","Songti SC",serif`,
+  notoSansSC: `"Noto Sans SC","PingFang SC",sans-serif`,
+  notoSansJP: `"Noto Sans JP",sans-serif`,
+  notoSerifJP: `"Noto Serif JP",serif`,
+  notoSansKR: `"Noto Sans KR",sans-serif`,
+};
+const MAX_FONT_BYTES = 1.5*1024*1024;
+
+function compressImage(file, maxDim){
+  maxDim = maxDim || MAX_DIM;
+  return new Promise((resolve,reject)=>{
+    const reader = new FileReader();
+    reader.onerror = ()=>reject(new Error("讀取圖片失敗"));
+    reader.onload = ()=>{
+      const img = new Image();
+      img.onerror = ()=>reject(new Error("圖片格式無法讀取"));
+      img.onload = ()=>{
+        let w = img.width, h = img.height;
+        if(w > h && w > maxDim){ h = Math.round(h*maxDim/w); w = maxDim; }
+        else if(h >= w && h > maxDim){ w = Math.round(w*maxDim/h); h = maxDim; }
+        const canvas = document.createElement("canvas");
+        canvas.width = w; canvas.height = h;
+        canvas.getContext("2d").drawImage(img,0,0,w,h);
+        resolve(canvas.toDataURL("image/jpeg", JPEG_QUALITY));
+      };
+      img.src = reader.result;
+    };
+    reader.readAsDataURL(file);
+  });
+}
+
+// Rebuilds a book object field-by-field from untrusted input (e.g. an
+// imported file). Unknown/extra keys are dropped, missing keys fall back
+// to safe defaults, and the photo is only kept if it's actually an image
+// data URI — this is what keeps old backups (missing newer fields) and
+// any hand-edited/foreign file from breaking the app or injecting markup.
+function sanitizeBookData(raw, preserveMeta){
+  raw = raw && typeof raw === "object" ? raw : {};
+  const asStr = (v, max)=> typeof v === "string" ? v.slice(0, max) : "";
+  const asStrArray = (v, max)=> Array.isArray(v) ? v.filter(x=>typeof x==="string").map(x=>x.slice(0,120)).slice(0,max) : [];
+  return {
+    id: "b"+Date.now()+Math.random().toString(36).slice(2,7),
+    title: asStr(raw.title, 200),
+    circle: asStr(raw.circle, 200),
+    authors: asStrArray(raw.authors, 30),
+    work: asStr(raw.work, 200),
+    pairings: asStrArray(raw.pairings, 30),
+    price: (typeof raw.price === "string" || typeof raw.price === "number") ? String(raw.price).slice(0,20) : "",
+    currency: VALID_CURRENCIES.includes(raw.currency) ? raw.currency : "TWD",
+    link: /^https?:\/\//i.test(raw.link||"") ? asStr(raw.link, 500) : "",
+    note: asStr(raw.note, 2000),
+    shelf: asStr(raw.shelf, 100),
+    type: FIXED_TYPES.includes(raw.type) ? raw.type : "",
+    favorite: !!raw.favorite,
+    photo: (typeof raw.photo === "string" && /^data:image\//i.test(raw.photo)) ? raw.photo.slice(0, 2000000) : null,
+    createdAt: (preserveMeta && typeof raw.createdAt === "number") ? raw.createdAt : Date.now(),
+  };
+}
+
+function isHexColor(v){ return typeof v === "string" && /^#[0-9a-fA-F]{6}$/.test(v); }
+
+function sanitizeShelf(raw){
+  if(typeof raw === "string"){
+    const name = raw.slice(0,100);
+    return name ? { name, color:DEFAULT_SHELF_COLOR, textColor:DEFAULT_SHELF_TEXT } : null;
+  }
+  if(raw && typeof raw === "object" && typeof raw.name === "string" && raw.name){
+    return {
+      name: raw.name.slice(0,100),
+      color: isHexColor(raw.color) ? raw.color : DEFAULT_SHELF_COLOR,
+      textColor: isHexColor(raw.textColor) ? raw.textColor : DEFAULT_SHELF_TEXT,
+    };
+  }
+  return null;
+}
+
+function sanitizeProfile(raw){
+  raw = raw && typeof raw === "object" ? raw : {};
+  let font = raw.font;
+  if(font === "serif") font = "notoSerifTC";
+  if(font === "sans") font = "notoSansTC";
+  if(!KNOWN_FONTS.includes(font)) font = "notoSerifTC";
+  return {
+    nickname: typeof raw.nickname === "string" ? raw.nickname.slice(0,40) : "",
+    title: typeof raw.title === "string" ? raw.title.slice(0,40) : "",
+    avatar: (typeof raw.avatar === "string" && /^data:image\//i.test(raw.avatar)) ? raw.avatar.slice(0,2000000) : null,
+    font,
+    customFontData: (typeof raw.customFontData === "string" && raw.customFontData.indexOf("data:") === 0 && raw.customFontData.length < MAX_FONT_BYTES*1.4) ? raw.customFontData : null,
+    customFontName: typeof raw.customFontName === "string" ? raw.customFontName.slice(0,60) : "",
+  };
+}
+
+function sanitizeRates(raw){
+  raw = raw && typeof raw === "object" ? raw : {};
+  const clean = (v, def)=> (typeof v === "number" && isFinite(v) && v>0) ? v : def;
+  return { JPY:clean(raw.JPY, DEFAULT_RATES.JPY), CNY:clean(raw.CNY, DEFAULT_RATES.CNY), KRW:clean(raw.KRW, DEFAULT_RATES.KRW) };
+}
+
+function getShelf(name){
+  return shelves.find(s=>s.name===name) || null;
+}
+
+function convertToBase(amount, currency){
+  const num = Number(amount)||0;
+  if(!currency || currency==="TWD") return num;
+  const r = rates[currency];
+  return num * (typeof r==="number" ? r : (DEFAULT_RATES[currency]||1));
+}
+
+function exportSingleBook(id){
+  const b = books.find(x=>x.id===id);
+  if(!b) return;
+  const payload = { app:"doujin-books-single", version:1, exportedAt:new Date().toISOString(), book:b };
+  const blob = new Blob([JSON.stringify(payload, null, 2)], {type:"application/json"});
+  downloadBlob(blob, `分享書籍_${(b.title||"book").replace(/[\\/:*?"<>|]/g,"").trim().slice(0,40) || "book"}.json`);
+}
+
+function downloadBlob(blob, filename){
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = filename;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
+
+function loadBooks(){
+  try{
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if(!raw){
+      books = []; shelves = []; profile = sanitizeProfile({}); rates = sanitizeRates({});
+    }else{
+      const parsed = JSON.parse(raw);
+      if(Array.isArray(parsed)){
+        books = parsed; shelves = []; profile = sanitizeProfile({}); rates = sanitizeRates({});
+      }else if(parsed && typeof parsed === "object"){
+        books = Array.isArray(parsed.books) ? parsed.books : [];
+        shelves = Array.isArray(parsed.shelves) ? parsed.shelves.map(sanitizeShelf).filter(Boolean) : [];
+        profile = sanitizeProfile(parsed.profile);
+        rates = sanitizeRates(parsed.rates);
+      }else{
+        books = []; shelves = []; profile = sanitizeProfile({}); rates = sanitizeRates({});
+      }
+    }
+  }catch(e){
+    books = []; shelves = []; profile = sanitizeProfile({}); rates = sanitizeRates({});
+  }
+  books.forEach(b=>{ if(b.shelf && !getShelf(b.shelf)) shelves.push({name:b.shelf, color:DEFAULT_SHELF_COLOR, textColor:DEFAULT_SHELF_TEXT}); });
+  applyProfile();
+  render();
+}
+
+function persist(){
+  try{
+    localStorage.setItem(STORAGE_KEY, JSON.stringify({books, shelves, profile, rates}));
+  }catch(e){
+    console.error("儲存失敗", e);
+    alert("儲存失敗，可能是照片/字體太多超過瀏覽器的容量上限，建議移除幾張舊照片或自訂字體後再試一次。");
+  }
+}
+
+function injectCustomFontFace(){
+  let styleEl = document.getElementById("customFontFaceStyle");
+  if(!styleEl){
+    styleEl = document.createElement("style");
+    styleEl.id = "customFontFaceStyle";
+    document.head.appendChild(styleEl);
+  }
+  styleEl.textContent = profile.customFontData
+    ? `@font-face{ font-family:"UserCustomFont"; src:url(${profile.customFontData}); }`
+    : "";
+}
+
+function applyProfile(){
+  document.getElementById("appTitle").textContent = profile.title || "同人藏書誌";
+  const line = document.getElementById("profileLine");
+  if(profile.nickname || profile.avatar){
+    line.style.display = "flex";
+    document.getElementById("nicknameMini").textContent = profile.nickname || "";
+    const av = document.getElementById("avatarMini");
+    if(profile.avatar){ av.src = profile.avatar; av.style.display = "inline-block"; }
+    else{ av.style.display = "none"; }
+  }else{
+    line.style.display = "none";
+  }
+  injectCustomFontFace();
+  let stack;
+  if(profile.font === "custom" && profile.customFontData){
+    stack = `"UserCustomFont", ${FONT_STACKS.notoSansTC}`;
+  }else{
+    stack = FONT_STACKS[profile.font] || FONT_STACKS.notoSerifTC;
+  }
+  document.documentElement.style.setProperty("--font-serif", stack);
+}
+
+function fmtMoney(amount, currency){
+  const num = Number(amount)||0;
+  const sym = CURRENCY_SYMBOLS[currency] || "$";
+  return sym + num.toLocaleString();
+}
+
+function fmtMoneyGrouped(list){
+  const sums = {};
+  list.forEach(b=>{
+    const c = b.currency || "TWD";
+    sums[c] = (sums[c]||0) + (Number(b.price)||0);
+  });
+  const keys = Object.keys(sums).sort((a,b)=>{
+    const ia = CURRENCY_ORDER.indexOf(a), ib = CURRENCY_ORDER.indexOf(b);
+    return (ia<0?99:ia) - (ib<0?99:ib);
+  });
+  if(keys.length===0) return "$0";
+  return keys.map(c=>fmtMoney(sums[c], c)).join(" ・ ");
+}
+
+function sortBooks(list){
+  const arr = list.slice();
+  switch(sortMode){
+    case "created_asc": arr.sort((a,b)=>a.createdAt-b.createdAt); break;
+    case "price_desc": arr.sort((a,b)=>convertToBase(b.price,b.currency)-convertToBase(a.price,a.currency)); break;
+    case "price_asc": arr.sort((a,b)=>convertToBase(a.price,a.currency)-convertToBase(b.price,b.currency)); break;
+    case "title": arr.sort((a,b)=>String(a.title).localeCompare(String(b.title),'zh-Hant')); break;
+    default: arr.sort((a,b)=>b.createdAt-a.createdAt);
+  }
+  return arr;
+}
+
+function render(){
+  const search = document.getElementById("searchInput").value.trim().toLowerCase();
+
+  const works = Array.from(new Set(books.map(b=>b.work).filter(Boolean)));
+  const pairings = Array.from(new Set(books.flatMap(b=>b.pairings||[])));
+
+  renderFilterSelect("filterWorkSelect", works, activeWorkFilter, (v)=>{activeWorkFilter=v;render();});
+  renderFilterSelect("filterPairingSelect", pairings, activePairingFilter, (v)=>{activePairingFilter=v;render();});
+  renderChipRow("chipsType", FIXED_TYPES, activeTypeFilter, (v)=>{activeTypeFilter=v;render();});
+  renderShelfChips();
+  document.getElementById("favoriteFilterChip").classList.toggle("active", activeFavoriteOnly);
+
+  let filtered = books.filter(b=>{
+    const matchesWork = activeWorkFilter==="全部" || b.work===activeWorkFilter;
+    const matchesPairing = activePairingFilter==="全部" || (b.pairings||[]).includes(activePairingFilter);
+    const matchesShelf = activeShelfFilter==="全部" || b.shelf===activeShelfFilter;
+    const matchesType = activeTypeFilter==="全部" || b.type===activeTypeFilter;
+    const matchesFavorite = !activeFavoriteOnly || !!b.favorite;
+    const hay = [b.title,b.circle,(b.authors||[]).join(" "),b.work,(b.pairings||[]).join(" "),b.shelf,b.type,b.note].join(" ").toLowerCase();
+    const searchTerms = search.split(/\s+/).filter(Boolean);
+    const matchesSearch = searchTerms.length===0 || searchTerms.every(term=>hay.includes(term));
+    return matchesWork && matchesPairing && matchesShelf && matchesType && matchesFavorite && matchesSearch;
+  });
+  filtered = sortBooks(filtered);
+
+  const statsBar = document.getElementById("statsBar");
+  const isFiltered = activeWorkFilter!=="全部" || activePairingFilter!=="全部" || activeShelfFilter!=="全部" || activeTypeFilter!=="全部" || activeFavoriteOnly || search;
+  statsBar.innerHTML = `
+    <div>${isFiltered ? "符合" : "共"} <b>${filtered.length}</b> 本</div>
+    <div>${isFiltered ? "此範圍花費" : "總花費"} <b>${fmtMoneyGrouped(filtered)}</b></div>
+  `;
+
+  if(viewMode === "shelf"){
+    renderShelfDisplay(filtered);
+  }else{
+    renderCardList(filtered);
+  }
+}
+
+function renderCardList(filtered){
+  const list = document.getElementById("list");
+  if(filtered.length===0){
+    list.innerHTML = `<div class="empty">
+      <div class="big">${books.length===0 ? "還沒有紀錄" : "找不到符合的書籍"}</div>
+      <div>${books.length===0 ? "點右下角的「＋」新增第一本吧" : "換個關鍵字或篩選試試"}</div>
+    </div>`;
+    return;
+  }
+
+  list.innerHTML = filtered.map((b)=>{
+    const no = String(books.findIndex(x=>x.id===b.id)+1).padStart(3,"0");
+    return `
+    <div class="card" data-id="${b.id}">
+      <div class="card-top">
+        <div class="cat-no">${b.favorite ? "⭐ " : ""}NO. ${no}</div>
+        <div class="card-actions">
+          <button class="icon-btn share-btn" data-id="${b.id}">⇪</button>
+          <button class="icon-btn edit-btn" data-id="${b.id}">✎</button>
+          <button class="icon-btn del-btn" data-id="${b.id}">✕</button>
+        </div>
+      </div>
+      <div class="card-body">
+        ${b.photo ? `<img class="thumb" src="${escapeAttr(b.photo)}">` : ""}
+        <div class="card-text">
+          <div class="title">${escapeHtml(b.title)}</div>
+          <div class="meta-line">
+            ${b.type ? `<span class="label">類型</span>${escapeHtml(b.type)}` : ""}
+            ${b.shelf ? ` ／ <span class="label">書櫃</span>${shelfBadge(b.shelf)}` : ""}
+            ${b.circle ? ` ／ <span class="label">社團</span>${escapeHtml(b.circle)}` : ""}
+            ${(b.authors&&b.authors.length) ? ` ／ <span class="label">作者</span>${escapeHtml(b.authors.join("、"))}` : ""}
+            ${b.work ? ` ／ <span class="label">作品</span>${escapeHtml(b.work)}` : ""}
+          </div>
+          ${(b.pairings&&b.pairings.length) ? `<div>${b.pairings.map(p=>`<span class="pairing-pill" style="margin:2px 6px 2px 0;">${escapeHtml(p)}</span>`).join("")}</div>` : ""}
+        </div>
+      </div>
+      ${b.note ? `<div class="card-extra">${escapeHtml(b.note)}</div>` : ""}
+      ${b.link ? `<a class="card-link" href="${escapeAttr(b.link)}" target="_blank" rel="noopener">🔗 購買連結</a>` : ""}
+      <div class="card-bottom">
+        <div class="price">${fmtMoney(b.price, b.currency)}</div>
+        <div class="stamp-mark">已收藏</div>
+      </div>
+    </div>`;
+  }).join("");
+
+  document.querySelectorAll(".share-btn").forEach(btn=>{
+    btn.onclick = ()=>exportSingleBook(btn.dataset.id);
+  });
+  document.querySelectorAll(".edit-btn").forEach(btn=>{
+    btn.onclick = ()=>openSheet(btn.dataset.id);
+  });
+  document.querySelectorAll(".del-btn").forEach(btn=>{
+    btn.onclick = ()=>{
+      deleteTarget = btn.dataset.id;
+      const b = books.find(x=>x.id===deleteTarget);
+      document.getElementById("confirmText").textContent = b ? `《${b.title}》將被永久刪除` : "";
+      document.getElementById("confirmOverlay").classList.add("open");
+    };
+  });
+}
+
+function renderShelfDisplay(filtered){
+  const list = document.getElementById("list");
+  if(filtered.length===0){
+    list.innerHTML = `<div class="empty">
+      <div class="big">${books.length===0 ? "還沒有紀錄" : "找不到符合的書籍"}</div>
+      <div>${books.length===0 ? "點右下角的「＋」新增第一本吧" : "換個關鍵字或篩選試試"}</div>
+    </div>`;
+    return;
+  }
+  let banner = "";
+  if(activeShelfFilter !== "全部"){
+    const s = getShelf(activeShelfFilter);
+    const color = s ? s.color : DEFAULT_SHELF_COLOR;
+    const textColor = s ? s.textColor : DEFAULT_SHELF_TEXT;
+    banner = `<div class="shelf-name-banner" style="background:${escapeAttr(color)};color:${escapeAttr(textColor)};">${escapeHtml(activeShelfFilter)}</div>`;
+  }
+  const items = filtered.map(b=>{
+    const shelf = b.shelf ? getShelf(b.shelf) : null;
+    const cellColor = shelf ? shelf.color : DEFAULT_SHELF_COLOR;
+    const cover = b.photo
+      ? `<img class="shelf-cover" src="${escapeAttr(b.photo)}">`
+      : `<div class="shelf-cover-placeholder"><span>${escapeHtml(b.title)}</span></div>`;
+    return `
+    <div>
+      <div class="shelf-item" data-id="${b.id}" style="--cell-color:${escapeAttr(cellColor)};">
+        <div class="shelf-cover-wrap">
+          ${cover}
+          ${b.favorite ? `<div class="shelf-star">⭐</div>` : ""}
+        </div>
+      </div>
+      <div class="shelf-title">${escapeHtml(b.title)}</div>
+    </div>`;
+  }).join("");
+  list.innerHTML = `<div class="shelf-unit">${banner}<div class="shelf-grid">${items}</div></div>`;
+  document.querySelectorAll(".shelf-item").forEach(el=>{
+    el.onclick = ()=>openSheet(el.dataset.id);
+  });
+}
+
+function renderChipRow(elId, values, activeValue, onPick){
+  const el = document.getElementById(elId);
+  el.innerHTML = "";
+  const allChip = document.createElement("div");
+  allChip.className = "chip" + (activeValue==="全部"?" active":"");
+  allChip.textContent = "全部";
+  allChip.onclick = ()=>onPick("全部");
+  el.appendChild(allChip);
+  values.forEach(v=>{
+    const c = document.createElement("div");
+    c.className = "chip" + (activeValue===v?" active":"");
+    c.textContent = v;
+    c.onclick = ()=>onPick(v);
+    el.appendChild(c);
+  });
+}
+
+function renderFilterSelect(elId, values, activeValue, onPick){
+  const el = document.getElementById(elId);
+  const prevValue = el.value;
+  el.innerHTML = `<option value="全部">全部</option>` +
+    values.map(v=>`<option value="${escapeAttr(v)}">${escapeHtml(v)}</option>`).join("");
+  el.value = values.includes(activeValue) || activeValue==="全部" ? activeValue : "全部";
+  el.onchange = (e)=>onPick(e.target.value);
+}
+
+function shelfBadge(name){
+  const s = getShelf(name);
+  const color = s ? s.color : DEFAULT_SHELF_COLOR;
+  const textColor = s ? s.textColor : "#FFFFFF";
+  return `<span class="shelf-badge" style="background:${escapeAttr(color)};color:${escapeAttr(textColor)};">${escapeHtml(name)}</span>`;
+}
+
+function renderShelfChips(){
+  const el = document.getElementById("chipsShelf");
+  el.innerHTML = "";
+  const allChip = document.createElement("div");
+  allChip.className = "chip" + (activeShelfFilter==="全部"?" active":"");
+  allChip.textContent = "全部";
+  allChip.onclick = ()=>{activeShelfFilter="全部";render();};
+  el.appendChild(allChip);
+  shelves.forEach(s=>{
+    const c = document.createElement("div");
+    const active = activeShelfFilter===s.name;
+    c.className = "chip" + (active?" active":"");
+    c.textContent = s.name;
+    if(active){
+      c.style.background = s.color;
+      c.style.borderColor = s.color;
+      c.style.color = s.textColor;
+    }else{
+      // Inactive chips always use a fixed readable color — the shelf's own
+      // custom text color is meant to pair with its own background color
+      // (the active chip, the shelf banner, the badge), not with the
+      // neutral card background here, or it can end up unreadable.
+      c.style.borderColor = s.color;
+      c.style.color = "var(--ink-soft)";
+    }
+    c.onclick = ()=>{activeShelfFilter=s.name;render();};
+    el.appendChild(c);
+  });
+}
+
+function renderTypeChoiceChips(){
+  const el = document.getElementById("typeChoiceChips");
+  el.innerHTML = "";
+  FIXED_TYPES.forEach(t=>{
+    const c = document.createElement("div");
+    c.className = "chip" + (currentType===t ? " active" : "");
+    c.textContent = t;
+    c.onclick = ()=>{ currentType = (currentType===t) ? "" : t; renderTypeChoiceChips(); };
+    el.appendChild(c);
+  });
+}
+
+function escapeHtml(s){
+  return String(s||"").replace(/[&<>"']/g, m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[m]));
+}
+function escapeAttr(s){
+  return escapeHtml(s);
+}
+
+function updatePhotoPreview(){
+  const preview = document.getElementById("photoPreview");
+  const removeBtn = document.getElementById("photoRemoveBtn");
+  if(currentPhoto){
+    preview.src = currentPhoto;
+    preview.classList.remove("empty");
+    removeBtn.style.display = "block";
+  }else{
+    preview.removeAttribute("src");
+    preview.classList.add("empty");
+    removeBtn.style.display = "none";
+  }
+}
+
+function updateAvatarPreview(){
+  const preview = document.getElementById("avatarPreview");
+  const removeBtn = document.getElementById("avatarRemoveBtn");
+  if(profile.avatar){
+    preview.src = profile.avatar;
+    preview.classList.remove("empty");
+    removeBtn.style.display = "block";
+  }else{
+    preview.removeAttribute("src");
+    preview.classList.add("empty");
+    removeBtn.style.display = "none";
+  }
+}
+
+function refreshFontSelectUI(){
+  const row = document.getElementById("customFontOptionRow");
+  if(profile.customFontData){
+    row.style.display = "block";
+    document.getElementById("customFontNameLabel").textContent = (profile.font==="custom" ? "✓ 使用中：" : "") + (profile.customFontName || "自訂字體");
+  }else{
+    row.style.display = "none";
+  }
+}
+
+function renderSingleTagChips(containerId, inputId, values){
+  const el = document.getElementById(containerId);
+  el.innerHTML = "";
+  values.forEach(tag=>{
+    const chip = document.createElement("div");
+    chip.className = "tag-chip";
+    chip.textContent = tag;
+    chip.onclick = ()=>{ document.getElementById(inputId).value = tag; };
+    el.appendChild(chip);
+  });
+}
+
+function renderAuthorSelectedChips(){
+  const el = document.getElementById("authorSelectedChips");
+  el.innerHTML = "";
+  currentAuthors.forEach((name,idx)=>{
+    const chip = document.createElement("div");
+    chip.className = "tag-chip selected selected-chip";
+    chip.innerHTML = `${escapeHtml(name)} <span class="remove-x">✕</span>`;
+    chip.onclick = ()=>{
+      currentAuthors.splice(idx,1);
+      renderAuthorSelectedChips();
+      renderAuthorSuggestChips();
+    };
+    el.appendChild(chip);
+  });
+}
+
+function renderAuthorSuggestChips(){
+  const el = document.getElementById("authorSuggestChips");
+  const existing = Array.from(new Set(books.flatMap(b=>b.authors||[]))).filter(a=>!currentAuthors.includes(a));
+  el.innerHTML = "";
+  existing.forEach(name=>{
+    const chip = document.createElement("div");
+    chip.className = "tag-chip";
+    chip.textContent = name;
+    chip.onclick = ()=>{
+      currentAuthors.push(name);
+      renderAuthorSelectedChips();
+      renderAuthorSuggestChips();
+    };
+    el.appendChild(chip);
+  });
+}
+
+function addAuthorFromInput(){
+  const input = document.getElementById("fAuthorInput");
+  const name = input.value.trim();
+  if(name && !currentAuthors.includes(name)){
+    currentAuthors.push(name);
+    renderAuthorSelectedChips();
+    renderAuthorSuggestChips();
+  }
+  input.value = "";
+}
+document.getElementById("addAuthorBtn").onclick = addAuthorFromInput;
+document.getElementById("fAuthorInput").addEventListener("keydown",(e)=>{
+  if(e.key==="Enter"){ e.preventDefault(); addAuthorFromInput(); }
+});
+
+function renderPairingSelectedChips(){
+  const el = document.getElementById("pairingSelectedChips");
+  el.innerHTML = "";
+  currentPairings.forEach((name,idx)=>{
+    const chip = document.createElement("div");
+    chip.className = "tag-chip selected selected-chip";
+    chip.innerHTML = `${escapeHtml(name)} <span class="remove-x">✕</span>`;
+    chip.onclick = ()=>{
+      currentPairings.splice(idx,1);
+      renderPairingSelectedChips();
+      renderPairingSuggestChips();
+    };
+    el.appendChild(chip);
+  });
+}
+
+function renderPairingSuggestChips(){
+  const el = document.getElementById("pairingSuggestChips");
+  const existing = Array.from(new Set(books.flatMap(b=>b.pairings||[]))).filter(p=>!currentPairings.includes(p));
+  el.innerHTML = "";
+  existing.forEach(name=>{
+    const chip = document.createElement("div");
+    chip.className = "tag-chip";
+    chip.textContent = name;
+    chip.onclick = ()=>{
+      currentPairings.push(name);
+      renderPairingSelectedChips();
+      renderPairingSuggestChips();
+    };
+    el.appendChild(chip);
+  });
+}
+
+function addPairingFromInput(){
+  const input = document.getElementById("fPairingInput");
+  const name = input.value.trim();
+  if(name && !currentPairings.includes(name)){
+    currentPairings.push(name);
+    renderPairingSelectedChips();
+    renderPairingSuggestChips();
+  }
+  input.value = "";
+}
+document.getElementById("addPairingBtn").onclick = addPairingFromInput;
+document.getElementById("fPairingInput").addEventListener("keydown",(e)=>{
+  if(e.key==="Enter"){ e.preventDefault(); addPairingFromInput(); }
+});
+
+function renderShelfOptions(selected){
+  const sel = document.getElementById("fShelf");
+  sel.innerHTML = `<option value="">未分類</option>` +
+    shelves.map(s=>`<option value="${escapeAttr(s.name)}">${escapeHtml(s.name)}</option>`).join("") +
+    `<option value="__new__">＋ 新增書櫃...</option>`;
+  sel.value = getShelf(selected) ? selected : "";
+}
+document.getElementById("fShelf").addEventListener("change",(e)=>{
+  if(e.target.value === "__new__"){
+    const name = (prompt("輸入新書櫃名稱：")||"").trim();
+    if(name){
+      if(!getShelf(name)){ shelves.push({name, color:DEFAULT_SHELF_COLOR, textColor:DEFAULT_SHELF_TEXT}); persist(); }
+      renderShelfOptions(name);
+    }else{
+      renderShelfOptions("");
+    }
+  }
+});
+
+function updateFavoriteToggle(){
+  const btn = document.getElementById("favoriteToggle");
+  btn.textContent = currentFavorite ? "⭐ 已加入我的最愛" : "☆ 加入我的最愛";
+  btn.classList.toggle("active", currentFavorite);
+}
+document.getElementById("favoriteToggle").onclick = ()=>{
+  currentFavorite = !currentFavorite;
+  updateFavoriteToggle();
+};
+
+document.getElementById("favoriteFilterChip").onclick = ()=>{
+  activeFavoriteOnly = !activeFavoriteOnly;
+  render();
+};
+
+document.getElementById("sortSelect").onchange = (e)=>{
+  sortMode = e.target.value;
+  render();
+};
+
+document.getElementById("viewListBtn").onclick = ()=>{
+  viewMode = "list";
+  document.getElementById("viewListBtn").classList.add("active");
+  document.getElementById("viewShelfBtn").classList.remove("active");
+  render();
+};
+document.getElementById("viewShelfBtn").onclick = ()=>{
+  viewMode = "shelf";
+  document.getElementById("viewShelfBtn").classList.add("active");
+  document.getElementById("viewListBtn").classList.remove("active");
+  render();
+};
+
+function renderShelfManageList(){
+  const el = document.getElementById("shelfManageList");
+  if(shelves.length===0){
+    el.innerHTML = `<div style="color:var(--ink-soft);font-size:13px;padding:8px 0;">還沒有書櫃，新增一個開始分類吧</div>`;
+    return;
+  }
+  el.innerHTML = shelves.map(s=>`
+    <div class="shelf-row" data-name="${escapeAttr(s.name)}">
+      <div class="shelf-row-top">
+        <span style="font-weight:600;">${shelfBadge(s.name)}</span>
+        <span>
+          <button type="button" class="icon-btn rename-shelf-btn" data-name="${escapeAttr(s.name)}">✎</button>
+          <button type="button" class="icon-btn del-shelf-btn" data-name="${escapeAttr(s.name)}">✕</button>
+        </span>
+      </div>
+      <div class="shelf-color-row">
+        <div class="color-field">
+          <label>底色</label>
+          <input type="color" class="shelf-color-input" data-name="${escapeAttr(s.name)}" value="${s.color}">
+        </div>
+        <div class="color-field">
+          <label>文字顏色</label>
+          <input type="color" class="shelf-textcolor-input" data-name="${escapeAttr(s.name)}" value="${s.textColor}">
+        </div>
+      </div>
+    </div>`).join("");
+  el.querySelectorAll(".rename-shelf-btn").forEach(btn=>{
+    btn.onclick = ()=>{
+      const old = btn.dataset.name;
+      const name = (prompt("修改書櫃名稱：", old)||"").trim();
+      if(name && name!==old){
+        if(getShelf(name)){ alert("已經有同名的書櫃了"); return; }
+        const s = getShelf(old);
+        s.name = name;
+        books.forEach(b=>{ if(b.shelf===old) b.shelf=name; });
+        if(activeShelfFilter===old) activeShelfFilter=name;
+        persist();
+        renderShelfManageList();
+        render();
+      }
+    };
+  });
+  el.querySelectorAll(".del-shelf-btn").forEach(btn=>{
+    btn.onclick = ()=>{
+      const name = btn.dataset.name;
+      const count = books.filter(b=>b.shelf===name).length;
+      const msg = count>0 ? `「${name}」裡有 ${count} 本書，刪除書櫃後這些書會變成未分類，確定要刪除嗎？` : `確定要刪除書櫃「${name}」嗎？`;
+      if(confirm(msg)){
+        shelves = shelves.filter(s=>s.name!==name);
+        books.forEach(b=>{ if(b.shelf===name) b.shelf=""; });
+        if(activeShelfFilter===name) activeShelfFilter="全部";
+        persist();
+        renderShelfManageList();
+        render();
+      }
+    };
+  });
+  el.querySelectorAll(".shelf-color-input").forEach(inp=>{
+    inp.oninput = ()=>{
+      const s = getShelf(inp.dataset.name);
+      if(s){ s.color = inp.value; persist(); render(); }
+    };
+  });
+  el.querySelectorAll(".shelf-textcolor-input").forEach(inp=>{
+    inp.oninput = ()=>{
+      const s = getShelf(inp.dataset.name);
+      if(s){ s.textColor = inp.value; persist(); render(); }
+    };
+  });
+}
+document.getElementById("addShelfBtn").onclick = ()=>{
+  const input = document.getElementById("newShelfInput");
+  const name = input.value.trim();
+  if(name){
+    if(getShelf(name)){ alert("已經有同名的書櫃了"); }
+    else{ shelves.push({name, color:DEFAULT_SHELF_COLOR, textColor:DEFAULT_SHELF_TEXT}); persist(); renderShelfManageList(); render(); }
+    input.value = "";
+  }
+};
+document.getElementById("manageShelvesBtn").onclick = ()=>{
+  document.getElementById("settingsOverlay").classList.remove("open");
+  renderShelfManageList();
+  document.getElementById("shelfManageOverlay").classList.add("open");
+};
+document.getElementById("shelfManageCloseBtn").onclick = ()=>{
+  document.getElementById("shelfManageOverlay").classList.remove("open");
+};
+document.getElementById("shelfManageOverlay").addEventListener("click",(e)=>{
+  if(e.target.id==="shelfManageOverlay") document.getElementById("shelfManageOverlay").classList.remove("open");
+});
+
+// --- Help panel ---
+document.getElementById("helpBtn").onclick = ()=>{
+  document.getElementById("helpOverlay").classList.add("open");
+};
+document.getElementById("helpCloseBtn").onclick = ()=>{
+  document.getElementById("helpOverlay").classList.remove("open");
+};
+document.getElementById("helpOverlay").addEventListener("click",(e)=>{
+  if(e.target.id==="helpOverlay") document.getElementById("helpOverlay").classList.remove("open");
+});
+
+// --- Settings panel ---
+document.getElementById("settingsBtn").onclick = ()=>{
+  document.getElementById("nicknameInput").value = profile.nickname;
+  document.getElementById("titleInput").value = profile.title;
+  document.getElementById("fontSelect").value = KNOWN_FONTS.includes(profile.font) ? profile.font : "notoSerifTC";
+  document.getElementById("rateJPY").value = rates.JPY;
+  document.getElementById("rateCNY").value = rates.CNY;
+  document.getElementById("rateKRW").value = rates.KRW;
+  updateAvatarPreview();
+  refreshFontSelectUI();
+  document.getElementById("settingsOverlay").classList.add("open");
+};
+document.getElementById("settingsCloseBtn").onclick = ()=>{
+  document.getElementById("settingsOverlay").classList.remove("open");
+};
+document.getElementById("settingsOverlay").addEventListener("click",(e)=>{
+  if(e.target.id==="settingsOverlay") document.getElementById("settingsOverlay").classList.remove("open");
+});
+
+document.getElementById("nicknameInput").oninput = (e)=>{
+  profile.nickname = e.target.value.trim();
+  persist();
+  applyProfile();
+};
+document.getElementById("titleInput").oninput = (e)=>{
+  profile.title = e.target.value.trim();
+  persist();
+  applyProfile();
+};
+document.getElementById("fontSelect").onchange = (e)=>{
+  profile.font = e.target.value;
+  persist();
+  applyProfile();
+  refreshFontSelectUI();
+};
+document.getElementById("avatarUpload").onchange = async (e)=>{
+  const file = e.target.files && e.target.files[0];
+  if(!file) return;
+  try{
+    profile.avatar = await compressImage(file, 200);
+    persist();
+    applyProfile();
+    updateAvatarPreview();
+  }catch(err){
+    alert("圖片處理失敗，請換一張試試");
+  }
+  e.target.value = "";
+};
+document.getElementById("avatarRemoveBtn").onclick = ()=>{
+  profile.avatar = null;
+  persist();
+  applyProfile();
+  updateAvatarPreview();
+};
+
+document.getElementById("customFontUpload").onchange = ()=>{
+  const input = document.getElementById("customFontUpload");
+  const file = input.files && input.files[0];
+  if(!file) return;
+  if(file.size > MAX_FONT_BYTES){
+    alert(`這個字體檔案有 ${(file.size/1024/1024).toFixed(1)}MB，超過建議上限 1.5MB。手機瀏覽器能存的總空間有限，字體太大會影響書籍資料的儲存空間，請換一個較小的字體檔（或子集版本）。`);
+    input.value = "";
+    return;
+  }
+  const reader = new FileReader();
+  reader.onload = ()=>{
+    profile.customFontData = reader.result;
+    profile.customFontName = file.name.replace(/\.[^.]+$/,"").slice(0,60);
+    profile.font = "custom";
+    persist();
+    applyProfile();
+    refreshFontSelectUI();
+  };
+  reader.onerror = ()=> alert("讀取字體檔案失敗");
+  reader.readAsDataURL(file);
+  input.value = "";
+};
+document.getElementById("useCustomFontBtn").onclick = ()=>{
+  if(profile.customFontData){
+    profile.font = "custom";
+    persist();
+    applyProfile();
+    refreshFontSelectUI();
+  }
+};
+document.getElementById("removeCustomFontBtn").onclick = ()=>{
+  profile.customFontData = null;
+  profile.customFontName = "";
+  if(profile.font === "custom") profile.font = "notoSerifTC";
+  persist();
+  applyProfile();
+  refreshFontSelectUI();
+  document.getElementById("fontSelect").value = KNOWN_FONTS.includes(profile.font) ? profile.font : "notoSerifTC";
+};
+
+function bindRateInput(id, key){
+  document.getElementById(id).oninput = (e)=>{
+    const v = Number(e.target.value);
+    rates[key] = (isFinite(v) && v>0) ? v : DEFAULT_RATES[key];
+    persist();
+    render();
+  };
+}
+bindRateInput("rateJPY","JPY");
+bindRateInput("rateCNY","CNY");
+bindRateInput("rateKRW","KRW");
+
+function openSheet(id){
+  editingId = id || null;
+  const b = id ? books.find(x=>x.id===id) : null;
+  document.getElementById("sheetTitle").textContent = id ? "編輯書籍" : "新增書籍";
+  document.getElementById("fTitle").value = b ? b.title : "";
+  document.getElementById("fCircle").value = b ? (b.circle || "") : "";
+  document.getElementById("fWork").value = b ? b.work : "";
+  document.getElementById("fPairingInput").value = "";
+  document.getElementById("fPrice").value = b ? b.price : "";
+  document.getElementById("fCurrency").value = b ? (b.currency || "TWD") : "TWD";
+  document.getElementById("fLink").value = b ? (b.link || "") : "";
+  document.getElementById("fNote").value = b ? (b.note || "") : "";
+  document.getElementById("fAuthorInput").value = "";
+  currentAuthors = b ? (b.authors ? b.authors.slice() : []) : [];
+  currentPairings = b ? (b.pairings ? b.pairings.slice() : []) : [];
+  currentPhoto = b ? (b.photo || null) : null;
+  currentFavorite = b ? !!b.favorite : false;
+  currentType = b ? (b.type || "") : "";
+  updatePhotoPreview();
+  updateFavoriteToggle();
+  renderTypeChoiceChips();
+  renderShelfOptions(b ? (b.shelf || "") : "");
+  renderAuthorSelectedChips();
+  renderAuthorSuggestChips();
+  renderPairingSelectedChips();
+  renderPairingSuggestChips();
+  renderSingleTagChips("circleTagChips","fCircle", Array.from(new Set(books.map(x=>x.circle).filter(Boolean))));
+  renderSingleTagChips("workTagChips","fWork", Array.from(new Set(books.map(x=>x.work).filter(Boolean))));
+  document.getElementById("sheetOverlay").classList.add("open");
+}
+
+function closeSheet(){
+  document.getElementById("sheetOverlay").classList.remove("open");
+  editingId = null;
+  currentPhoto = null;
+  currentAuthors = [];
+  currentPairings = [];
+  currentFavorite = false;
+  currentType = "";
+}
+
+async function handlePhotoFile(input){
+  const file = input.files && input.files[0];
+  if(!file) return;
+  try{
+    currentPhoto = await compressImage(file);
+    updatePhotoPreview();
+  }catch(e){
+    alert("圖片處理失敗，請換一張試試");
+  }
+  input.value = "";
+}
+document.getElementById("photoCamera").onchange = (e)=>handlePhotoFile(e.target);
+document.getElementById("photoUpload").onchange = (e)=>handlePhotoFile(e.target);
+document.getElementById("photoRemoveBtn").onclick = ()=>{
+  currentPhoto = null;
+  updatePhotoPreview();
+};
+
+document.getElementById("addFab").onclick = ()=>openSheet(null);
+document.getElementById("cancelBtn").onclick = closeSheet;
+document.getElementById("sheetOverlay").addEventListener("click",(e)=>{
+  if(e.target.id==="sheetOverlay") closeSheet();
+});
+
+document.getElementById("saveBtn").onclick = ()=>{
+  const title = document.getElementById("fTitle").value.trim();
+  if(!title){
+    document.getElementById("fTitle").style.borderColor = "#A63D40";
+    return;
+  }
+  addAuthorFromInput();
+  addPairingFromInput();
+  const data = {
+    title,
+    circle: document.getElementById("fCircle").value.trim(),
+    authors: currentAuthors.slice(),
+    work: document.getElementById("fWork").value.trim(),
+    pairings: currentPairings.slice(),
+    price: document.getElementById("fPrice").value.trim(),
+    currency: document.getElementById("fCurrency").value,
+    link: document.getElementById("fLink").value.trim(),
+    note: document.getElementById("fNote").value.trim(),
+    shelf: document.getElementById("fShelf").value === "__new__" ? "" : document.getElementById("fShelf").value,
+    favorite: currentFavorite,
+    type: currentType,
+    photo: currentPhoto,
+  };
+  if(editingId){
+    const b = books.find(x=>x.id===editingId);
+    Object.assign(b, data);
+  }else{
+    books.push({id:"b"+Date.now()+Math.random().toString(36).slice(2,7), ...data, createdAt:Date.now()});
+  }
+  persist();
+  closeSheet();
+  render();
+};
+
+document.getElementById("confirmCancel").onclick = ()=>{
+  document.getElementById("confirmOverlay").classList.remove("open");
+  deleteTarget = null;
+};
+document.getElementById("confirmOk").onclick = ()=>{
+  if(deleteTarget === "__ALL__"){
+    books = [];
+  }else{
+    books = books.filter(b=>b.id!==deleteTarget);
+  }
+  persist();
+  document.getElementById("confirmOverlay").classList.remove("open");
+  deleteTarget = null;
+  render();
+};
+
+document.getElementById("searchInput").oninput = render;
+
+document.getElementById("resetBtn").onclick = ()=>{
+  deleteTarget = "__ALL__";
+  document.getElementById("confirmText").textContent = "所有藏書紀錄將被永久清空";
+  document.getElementById("confirmOverlay").classList.add("open");
+};
+
+document.getElementById("exportBtn").onclick = ()=>{
+  const payload = { app:"doujin-books", version:4, exportedAt:new Date().toISOString(), books, shelves, profile, rates };
+  const blob = new Blob([JSON.stringify(payload, null, 2)], {type:"application/json"});
+  const stamp = new Date().toISOString().slice(0,10);
+  downloadBlob(blob, `同人藏書誌備份_${stamp}.json`);
+};
+
+document.getElementById("importFile").onchange = (e)=>{
+  const file = e.target.files && e.target.files[0];
+  if(!file) return;
+  const reader = new FileReader();
+  reader.onload = ()=>{
+    let parsed;
+    try{
+      parsed = JSON.parse(reader.result);
+    }catch(err){
+      alert("這個檔案看起來不是有效的 json，請確認選對檔案。");
+      e.target.value = "";
+      return;
+    }
+
+    // Single-book share: {app:"doujin-books-single", book:{...}}
+    if(parsed && typeof parsed === "object" && parsed.book && typeof parsed.book === "object"){
+      const nb = sanitizeBookData(parsed.book, false);
+      const ok = confirm(`要把《${nb.title || "這本書"}》加入你的收藏嗎？`);
+      if(ok){
+        books.push(nb);
+        if(nb.shelf && !getShelf(nb.shelf)) shelves.push({name:nb.shelf, color:DEFAULT_SHELF_COLOR, textColor:DEFAULT_SHELF_TEXT});
+        persist();
+        render();
+        alert("新增完成！");
+      }
+      e.target.value = "";
+      return;
+    }
+
+    // Full backup: {books:[...], shelves:[...], profile:{...}, rates:{...}} or a bare array
+    const rawList = Array.isArray(parsed) ? parsed : parsed.books;
+    if(!Array.isArray(rawList)){
+      alert("這個檔案格式看起來不對，請確認選擇的是本工具匯出的備份檔。");
+      e.target.value = "";
+      return;
+    }
+    const ok = confirm(`即將匯入 ${rawList.length} 筆資料，這會取代目前所有的紀錄，確定要繼續嗎？`);
+    if(ok){
+      const sanitizedBooks = rawList.map(r=>sanitizeBookData(r, true));
+      const rawShelves = (parsed && Array.isArray(parsed.shelves)) ? parsed.shelves : [];
+      let newShelves = rawShelves.map(sanitizeShelf).filter(Boolean);
+      sanitizedBooks.forEach(b=>{
+        if(b.shelf && !newShelves.some(s=>s.name===b.shelf)){
+          newShelves.push({name:b.shelf, color:DEFAULT_SHELF_COLOR, textColor:DEFAULT_SHELF_TEXT});
+        }
+      });
+      books = sanitizedBooks;
+      shelves = newShelves;
+      if(parsed && parsed.profile) profile = sanitizeProfile(parsed.profile);
+      if(parsed && parsed.rates) rates = sanitizeRates(parsed.rates);
+      persist();
+      applyProfile();
+      render();
+      alert("匯入完成！");
+    }
+    e.target.value = "";
+  };
+  reader.readAsText(file);
+};
+
+function csvEscape(v){
+  v = String(v==null ? "" : v);
+  if(/[",\r\n]/.test(v)){
+    return '"' + v.replace(/"/g,'""') + '"';
+  }
+  return v;
+}
+
+document.getElementById("downloadCsvBtn").onclick = ()=>{
+  const headers = ["書名","社團","作者(可用、分隔多位)","作品","配對(可用、分隔多組)","價格","幣別(TWD/JPY/CNY/KRW)","書櫃","類型(漫畫/小說/畫冊/其他)","最愛(是/否)","購買連結","備註"];
+  const example = ["無題的青春","某某工房","春河35、朝霧卡夫卡","原創","","350","TWD","","漫畫","否","",""];
+  const rows = [headers, example];
+  const csv = rows.map(r=>r.map(csvEscape).join(",")).join("\r\n");
+  const blob = new Blob(["\uFEFF"+csv], {type:"text/csv;charset=utf-8;"});
+  downloadBlob(blob, "同人藏書誌_匯入範本.csv");
+};
+
+// Minimal RFC4180-ish CSV parser: handles quoted fields, escaped quotes ("")
+// inside them, and commas/newlines within quotes.
+function parseCSV(text){
+  const rows = [];
+  let row = [], field = "", inQuotes = false;
+  text = text.replace(/\r\n/g, "\n").replace(/\r/g, "\n");
+  for(let i=0;i<text.length;i++){
+    const c = text[i];
+    if(inQuotes){
+      if(c === '"'){
+        if(text[i+1] === '"'){ field += '"'; i++; }
+        else{ inQuotes = false; }
+      }else{
+        field += c;
+      }
+    }else{
+      if(c === '"'){ inQuotes = true; }
+      else if(c === ','){ row.push(field); field = ""; }
+      else if(c === '\n'){ row.push(field); rows.push(row); row = []; field = ""; }
+      else{ field += c; }
+    }
+  }
+  if(field.length>0 || row.length>0){ row.push(field); rows.push(row); }
+  return rows.filter(r=>!(r.length===1 && r[0].trim()===""));
+}
+
+document.getElementById("importCsvFile").onchange = (e)=>{
+  const file = e.target.files && e.target.files[0];
+  if(!file) return;
+  const reader = new FileReader();
+  reader.onload = ()=>{
+    let text = reader.result;
+    if(text.charCodeAt(0) === 0xFEFF) text = text.slice(1);
+    const rows = parseCSV(text);
+    if(rows.length < 2){
+      alert("這個檔案看起來沒有資料，請確認格式。");
+      e.target.value = "";
+      return;
+    }
+    const header = rows[0].map(h=>h.trim());
+    const idx = (name)=> header.findIndex(h=>h.indexOf(name)===0);
+    const cTitle=idx("書名"), cCircle=idx("社團"), cAuthors=idx("作者"), cWork=idx("作品"),
+          cPairings=idx("配對"), cPrice=idx("價格"), cCurrency=idx("幣別"), cShelf=idx("書櫃"),
+          cType=idx("類型"), cFav=idx("最愛"), cLink=idx("購買連結"), cNote=idx("備註");
+    if(cTitle === -1){
+      alert("找不到「書名」欄位，請使用範本檔案的欄位名稱，不要更改標題列。");
+      e.target.value = "";
+      return;
+    }
+    const get = (r,i)=> (i>=0 && r[i]!==undefined) ? r[i].trim() : "";
+    const splitList = (s)=> s ? s.split(/[、,;]/).map(x=>x.trim()).filter(Boolean) : [];
+    const newBooks = rows.slice(1)
+      .filter(r=>r.some(c=>c && c.trim()!==""))
+      .map(r=>{
+        const title = get(r,cTitle);
+        if(!title) return null;
+        const currencyRaw = get(r,cCurrency).toUpperCase();
+        const typeRaw = get(r,cType);
+        return sanitizeBookData({
+          title,
+          circle: get(r,cCircle),
+          authors: splitList(get(r,cAuthors)),
+          work: get(r,cWork),
+          pairings: splitList(get(r,cPairings)),
+          price: get(r,cPrice).replace(/[^\d.]/g,""),
+          currency: VALID_CURRENCIES.includes(currencyRaw) ? currencyRaw : "TWD",
+          link: get(r,cLink),
+          note: get(r,cNote),
+          shelf: get(r,cShelf),
+          type: FIXED_TYPES.includes(typeRaw) ? typeRaw : "",
+          favorite: /^(是|yes|true|1|y)$/i.test(get(r,cFav)),
+          photo: null,
+        }, false);
+      })
+      .filter(Boolean);
+    if(newBooks.length===0){
+      alert("沒有讀到有效的書籍資料（至少要填書名這一欄）。");
+      e.target.value = "";
+      return;
+    }
+    const ok = confirm(`讀到 ${newBooks.length} 筆資料，要新增到你的收藏嗎？（不會刪除或覆蓋你現有的書）`);
+    if(ok){
+      newBooks.forEach(nb=>{
+        if(nb.shelf && !getShelf(nb.shelf)) shelves.push({name:nb.shelf, color:DEFAULT_SHELF_COLOR, textColor:DEFAULT_SHELF_TEXT});
+      });
+      books = books.concat(newBooks);
+      persist();
+      render();
+      alert(`已新增 ${newBooks.length} 本書！封面照片需要之後再手動幫每本補上。`);
+    }
+    e.target.value = "";
+  };
+  reader.readAsText(file, "UTF-8");
+};
+
+if(navigator.storage && navigator.storage.persist){
+  navigator.storage.persist().catch(()=>{});
+}
+
+loadBooks();
+</script>
+</body>
+</html>
