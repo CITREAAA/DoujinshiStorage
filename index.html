@@ -7,6 +7,8 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;600;700&family=Noto+Serif+TC:wght@500;600;700&family=Noto+Sans+SC:wght@400;600;700&family=Noto+Serif+SC:wght@500;600;700&family=Noto+Sans+JP:wght@400;600;700&family=Noto+Serif+JP:wght@500;600;700&family=Noto+Sans+KR:wght@400;600;700&display=swap" rel="stylesheet">
+<!-- 引入 SheetJS 支援解析 .xlsx / .xls -->
+<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 <style>
   :root{
     --paper:#EDE9E0;
@@ -881,7 +883,7 @@
     <div class="settings-btn-row">
       <button class="mini-btn" id="downloadCsvBtn">下載Excel範本</button>
       <label class="mini-btn" for="importCsvFile">匯入Excel</label>
-      <input type="file" id="importCsvFile" accept=".csv,text/csv" style="display:none;">
+      <input type="file" id="importCsvFile" accept=".xlsx,.xls,.csv,text/csv,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.ms-excel" style="display:none;">
     </div>
 
     <h3 class="settings-section" style="color:var(--stamp);">危險區域</h3>
@@ -916,7 +918,7 @@
     <p>每張書籍卡片右上角的「⇪」可以把這一本書匯出成一個小檔案，傳給同樣使用這個工具的朋友，對方用「匯入備份」就能把這本書加進他自己的收藏（不會動到他原本的資料）。</p>
 
     <h4>備份與資料搬家</h4>
-    <p>「匯出備份」會把所有資料（書籍、照片、書櫃、設定）打包成一個檔案，請妥善保存；「匯入備份」用來還原，會取代目前所有資料。如果你原本用 Excel／表格記錄，可以「下載Excel範本」照欄位填好，再用「匯入Excel」整批新增（不含封面照片，之後需要另外手動補上）。</p>
+    <p>「匯出備份」會把所有資料（書籍、照片、書櫃、設定）打包成一個檔案，請妥善保存；「匯入備份」用來還原，會取代目前所有資料。如果你原本用 Excel／表格記錄，可以「下載Excel範本」照欄位填好，再用「匯入Excel」整批新增（支援 .xlsx、.xls 與 .csv，不含封面照片，之後需要另外手動補上）。</p>
 
     <h4>個人化</h4>
     <p>可以設定暱稱、大頭貼、頁面標題，以及標題字體（7 種內建，涵蓋繁中／簡中／日文／韓文），也可以上傳自己喜歡的字體檔案。</p>
@@ -1942,92 +1944,86 @@ document.getElementById("downloadCsvBtn").onclick = ()=>{
   downloadBlob(blob, "同人藏書誌_匯入範本.csv");
 };
 
-function parseCSV(text){
-  const rows = [];
-  let row = [], field = "", inQuotes = false;
-  text = text.replace(/\r\n/g, "\n").replace(/\r/g, "\n");
-  for(let i=0;i<text.length;i++){
-    const c = text[i];
-    if(inQuotes){
-      if(c === '"'){
-        if(text[i+1] === '"'){ field += '"'; i++; }
-        else{ inQuotes = false; }
-      }else{
-        field += c;
-      }
-    }else{
-      if(c === '"'){ inQuotes = true; }
-      else if(c === ','){ row.push(field); field = ""; }
-      else if(c === '\n'){ row.push(field); rows.push(row); row = []; field = ""; }
-      else{ field += c; }
-    }
-  }
-  if(field.length>0 || row.length>0){ row.push(field); rows.push(row); }
-  return rows.filter(r=>!(r.length===1 && r[0].trim()===""));
-}
-
+// 匯入 Excel (.xlsx / .xls) 或 CSV
 document.getElementById("importCsvFile").onchange = (e)=>{
   const file = e.target.files && e.target.files[0];
   if(!file) return;
+
   const reader = new FileReader();
-  reader.onload = ()=>{
-    let text = reader.result;
-    if(text.charCodeAt(0) === 0xFEFF) text = text.slice(1);
-    const rows = parseCSV(text);
-    if(rows.length < 2){
-      alert("這個檔案看起來沒有資料，請確認格式。");
-      e.target.value = "";
-      return;
-    }
-    const header = rows[0].map(h=>h.trim());
-    const idx = (name)=> header.findIndex(h=>h.indexOf(name)===0);
-    const cTitle=idx("書名"), cAuthors=idx("作者"), cWork=idx("作品"),
-          cPairings=idx("配對"), cShelf=idx("書櫃"),
-          cType=idx("類型"), cFav=idx("最愛"), cNote=idx("備註");
-    if(cTitle === -1){
-      alert("找不到「書名」欄位，請使用範本檔案的欄位名稱，不要更改標題列。");
-      e.target.value = "";
-      return;
-    }
-    const get = (r,i)=> (i>=0 && r[i]!==undefined) ? r[i].trim() : "";
-    const splitList = (s)=> s ? s.split(/[、,;]/).map(x=>x.trim()).filter(Boolean) : [];
-    const newBooks = rows.slice(1)
-      .filter(r=>r.some(c=>c && c.trim()!==""))
-      .map(r=>{
-        const title = get(r,cTitle);
-        if(!title) return null;
-        const typeRaw = get(r,cType);
-        return sanitizeBookData({
-          title,
-          authors: splitList(get(r,cAuthors)),
-          work: get(r,cWork),
-          pairings: splitList(get(r,cPairings)),
-          note: get(r,cNote),
-          shelf: get(r,cShelf),
-          type: FIXED_TYPES.includes(typeRaw) ? typeRaw : "",
-          favorite: /^(是|yes|true|1|y)$/i.test(get(r,cFav)),
-          photo: null,
-        }, false);
-      })
-      .filter(Boolean);
-    if(newBooks.length===0){
-      alert("沒有讀到有效的書籍資料（至少要填書名這一欄）。");
-      e.target.value = "";
-      return;
-    }
-    const ok = confirm(`讀到 ${newBooks.length} 筆資料，要新增到你的收藏嗎？（不會刪除或覆蓋你現有的書）`);
-    if(ok){
-      newBooks.forEach(nb=>{
-        if(nb.shelf && !getShelf(nb.shelf)) shelves.push({name:nb.shelf, color:DEFAULT_SHELF_COLOR, textColor:DEFAULT_SHELF_TEXT});
-      });
-      books = books.concat(newBooks);
-      persist();
-      render();
-      alert(`已新增 ${newBooks.length} 本書！封面照片需要之後再手動幫每本補上。`);
+  reader.onload = (event)=>{
+    try{
+      const data = new Uint8Array(event.target.result);
+      const workbook = XLSX.read(data, {type: 'array'});
+      const firstSheetName = workbook.SheetNames[0];
+      const worksheet = workbook.Sheets[firstSheetName];
+      
+      // 轉換成二維陣列（預設過濾空白列）
+      const rows = XLSX.utils.sheet_to_json(worksheet, {header: 1, defval: ""});
+
+      if(rows.length < 2){
+        alert("這個檔案看起來沒有資料，請確認格式。");
+        e.target.value = "";
+        return;
+      }
+
+      const header = rows[0].map(h=>String(h||"").trim());
+      const idx = (name)=> header.findIndex(h=>h.indexOf(name)===0);
+      const cTitle=idx("書名"), cAuthors=idx("作者"), cWork=idx("作品"),
+            cPairings=idx("配對"), cShelf=idx("書櫃"),
+            cType=idx("類型"), cFav=idx("最愛"), cNote=idx("備註");
+
+      if(cTitle === -1){
+        alert("找不到「書名」欄位，請使用範本檔案的欄位名稱，不要更改標題列。");
+        e.target.value = "";
+        return;
+      }
+
+      const get = (r,i)=> (i>=0 && r[i]!==undefined) ? String(r[i]).trim() : "";
+      const splitList = (s)=> s ? s.split(/[、,;]/).map(x=>x.trim()).filter(Boolean) : [];
+      
+      const newBooks = rows.slice(1)
+        .filter(r=>r.some(c=>c && String(c).trim()!==""))
+        .map(r=>{
+          const title = get(r,cTitle);
+          if(!title) return null;
+          const typeRaw = get(r,cType);
+          return sanitizeBookData({
+            title,
+            authors: splitList(get(r,cAuthors)),
+            work: get(r,cWork),
+            pairings: splitList(get(r,cPairings)),
+            note: get(r,cNote),
+            shelf: get(r,cShelf),
+            type: FIXED_TYPES.includes(typeRaw) ? typeRaw : "",
+            favorite: /^(是|yes|true|1|y)$/i.test(get(r,cFav)),
+            photo: null,
+          }, false);
+        })
+        .filter(Boolean);
+
+      if(newBooks.length===0){
+        alert("沒有讀到有效的書籍資料（至少要填書名這一欄）。");
+        e.target.value = "";
+        return;
+      }
+
+      const ok = confirm(`讀到 ${newBooks.length} 筆資料，要新增到你的收藏嗎？（不會刪除或覆蓋你現有的書）`);
+      if(ok){
+        newBooks.forEach(nb=>{
+          if(nb.shelf && !getShelf(nb.shelf)) shelves.push({name:nb.shelf, color:DEFAULT_SHELF_COLOR, textColor:DEFAULT_SHELF_TEXT});
+        });
+        books = books.concat(newBooks);
+        persist();
+        render();
+        alert(`已新增 ${newBooks.length} 本書！封面照片需要之後再手動幫每本補上。`);
+      }
+    }catch(err){
+      console.error(err);
+      alert("解析檔案失敗，請確認檔案格式是否為標準的 Excel (.xlsx / .xls) 或 CSV 檔。");
     }
     e.target.value = "";
   };
-  reader.readAsText(file, "UTF-8");
+  reader.readAsArrayBuffer(file);
 };
 
 if(navigator.storage && navigator.storage.persist){
